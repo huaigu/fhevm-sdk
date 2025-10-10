@@ -57,7 +57,7 @@
     "precommit": "lint-staged",
     "preinstall": "pnpm sdk:build",
     "start": "pnpm --filter ./packages/nextjs dev",
-    "test": "pnpm hardhat:test",
+    "test:hardhat": "pnpm hardhat:test",
     "vercel": "pnpm --filter ./packages/nextjs vercel",
     "vercel:login": "pnpm --filter ./packages/nextjs vercel:login",
     "vercel:yolo": "pnpm --filter ./packages/nextjs vercel:yolo",
