@@ -3,7 +3,8 @@
 import { useInit, useEncrypt, useDecrypt, useStatus } from "@fhevm/react";
 import { BrowserProvider } from "ethers";
 import { useEffect, useState } from "react";
-import { useAccount, useWalletClient } from "wagmi";
+import { useAccount, useWalletClient, useChainId } from "wagmi";
+import { deployedContracts, type SupportedChainId } from "~~/contracts/deployedContracts";
 
 /**
  * EncryptedCounterDemo - Demonstration of @fhevm/react hooks
@@ -16,6 +17,7 @@ import { useAccount, useWalletClient } from "wagmi";
 export function EncryptedCounterDemo() {
   const { address, isConnected } = useAccount();
   const { data: walletClient } = useWalletClient();
+  const chainId = useChainId();
 
   // FHEVM Hooks
   const { init, status, error: initError } = useInit();
@@ -30,6 +32,11 @@ export function EncryptedCounterDemo() {
 
   // Demo state
   const [value, setValue] = useState<number>(42);
+
+  // Get contract for current network
+  const contract = chainId && (chainId in deployedContracts)
+    ? deployedContracts[chainId as SupportedChainId].FHECounter
+    : null;
 
   // Auto-initialize when wallet connects
   useEffect(() => {
@@ -48,18 +55,18 @@ export function EncryptedCounterDemo() {
 
   // Handlers
   const handleEncrypt = async () => {
-    if (!address) return;
+    if (!address || !contract) return;
 
     await encrypt({
       value,
       type: "euint32",
-      contractAddress: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+      contractAddress: contract.address,
       userAddress: address,
     });
   };
 
   const handleDecrypt = async () => {
-    if (!encryptedData || !walletClient || !address) return;
+    if (!encryptedData || !walletClient || !address || !contract) return;
 
     try {
       // Convert wagmi walletClient to ethers provider/signer
@@ -70,7 +77,7 @@ export function EncryptedCounterDemo() {
         [
           {
             handle: "0x0000000000000000000000000000000000000000000000000000000000000001",
-            contractAddress: "0x0000000000000000000000000000000000000000" as `0x${string}`,
+            contractAddress: contract.address,
           },
         ],
         signer
@@ -103,6 +110,27 @@ export function EncryptedCounterDemo() {
         {initError && (
           <div className="alert alert-error">
             <span>Init Error: {initError.message}</span>
+          </div>
+        )}
+
+        {/* Network Info */}
+        {chainId && contract && (
+          <div className="alert">
+            <div className="flex justify-between w-full">
+              <div>
+                <span className="font-bold">Network:</span>{" "}
+                {chainId === 11155111 ? "Sepolia Testnet" : `Chain ID ${chainId}`}
+              </div>
+              <div className="text-xs opacity-70">
+                Contract: {contract.address.slice(0, 6)}...{contract.address.slice(-4)}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {chainId && !contract && (
+          <div className="alert alert-warning">
+            <span>⚠️ Contract not deployed on this network. Please switch to Sepolia.</span>
           </div>
         )}
 
