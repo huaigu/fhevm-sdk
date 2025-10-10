@@ -25,6 +25,8 @@
     "deploy:sepolia": "pnpm contract:deploy:sepolia && pnpm generate",
     "dev:react": "pnpm --filter nextjs-app dev",
     "dev:vue": "pnpm --filter vue-app dev",
+    "example:nextjs": "pnpm --filter nextjs-example dev",
+    "example:build": "pnpm --filter nextjs-example build",
     "fork": "pnpm hardhat:fork",
     "format": "pnpm next:format && pnpm hardhat:format",
     "release": "pnpm build && pnpm changeset publish",
