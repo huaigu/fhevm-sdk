@@ -27,6 +27,8 @@
     "dev:vue": "pnpm --filter vue-app dev",
     "example:nextjs": "pnpm --filter nextjs-example dev",
     "example:build": "pnpm --filter nextjs-example build",
+    "example:vue": "pnpm --filter vue-example dev",
+    "example:vue:build": "pnpm --filter vue-example build",
     "fork": "pnpm hardhat:fork",
     "format": "pnpm next:format && pnpm hardhat:format",
     "release": "pnpm build && pnpm changeset publish",
