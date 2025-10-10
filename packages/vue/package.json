@@ -1,0 +1,50 @@
+{
+  "name": "@fhevm/vue",
+  "version": "0.1.0",
+  "description": "Vue 3 composables for FHEVM SDK",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "fhevm",
+    "fhe",
+    "encryption",
+    "vue",
+    "vue3",
+    "composables",
+    "privacy",
+    "zama",
+    "blockchain"
+  ],
+  "license": "BSD-3-Clause-Clear",
+  "dependencies": {
+    "@fhevm/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0",
+    "ethers": "^6.13.7"
+  },
+  "devDependencies": {
+    "@vue/test-utils": "^2.4.6",
+    "@types/node": "^22.7.5",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vitest": "^2.1.9",
+    "vue": "^3.5.13"
+  }
+}

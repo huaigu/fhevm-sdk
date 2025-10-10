@@ -1,0 +1,20 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  entry: ['src/index.ts'],
+  format: ['esm', 'cjs'],
+  dts: {
+    resolve: true,
+    compilerOptions: {
+      composite: false,
+      incremental: false,
+    },
+  },
+  sourcemap: true,
+  clean: true,
+  splitting: false,
+  treeshake: true,
+  minify: false,
+  external: ['ethers', '@zama-fhe/relayer-sdk', '@fhevm/mock-utils'],
+  tsconfig: './tsconfig.json',
+});

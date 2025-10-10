@@ -12,12 +12,22 @@
     ]
   },
   "scripts": {
+    "build": "pnpm --filter \"./packages/*\" build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "chain": "pnpm hardhat:chain",
-    "compile": "pnpm hardhat:compile",
-    "deploy:localhost": "pnpm hardhat:deploy && pnpm generate",
-    "deploy:sepolia": "pnpm hardhat:deploy:sepolia && pnpm generate",
+    "compile": "pnpm contract:compile",
+    "contract:compile": "pnpm --filter @fhevm-contracts compile",
+    "contract:deploy": "pnpm --filter @fhevm-contracts deploy",
+    "contract:deploy:sepolia": "pnpm --filter @fhevm-contracts deploy:sepolia",
+    "deploy:localhost": "pnpm contract:deploy && pnpm generate",
+    "deploy:sepolia": "pnpm contract:deploy:sepolia && pnpm generate",
+    "dev:react": "pnpm --filter nextjs-app dev",
+    "dev:vue": "pnpm --filter vue-app dev",
     "fork": "pnpm hardhat:fork",
     "format": "pnpm next:format && pnpm hardhat:format",
+    "release": "pnpm build && pnpm changeset publish",
     "sdk:build": "pnpm --filter ./packages/fhevm-sdk build",
     "sdk:watch": "pnpm --filter ./packages/fhevm-sdk watch",
     "sdk:test": "pnpm --filter ./packages/fhevm-sdk test",
@@ -58,10 +68,15 @@
     "hardhat-deploy": "^0.11.45"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.29.7",
     "@types/node": "^22.7.5",
+    "@vitest/coverage-v8": "2.1.9",
+    "jsdom": "^27.0.0",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "vitest": "~2.1.9"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

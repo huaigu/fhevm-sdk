@@ -1,0 +1,23 @@
+{
+  "name": "@fhevm-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "compile": "hardhat compile",
+    "deploy": "hardhat deploy --network localfhevm",
+    "deploy:sepolia": "hardhat deploy --network sepolia",
+    "test": "hardhat test",
+    "clean": "hardhat clean"
+  },
+  "dependencies": {
+    "fhevm": "^0.6.0-1",
+    "fhevm-core-contracts": "^0.6.0-1"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@types/node": "^22.7.5",
+    "hardhat": "^2.22.17",
+    "hardhat-deploy": "^0.12.4",
+    "typescript": "^5.9.2"
+  }
+}
