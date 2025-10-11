@@ -31,7 +31,22 @@
     "zama",
     "blockchain"
   ],
+  "author": "Zama",
   "license": "BSD-3-Clause-Clear",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zama-ai/fhevm-sdk.git",
+    "directory": "packages/vue"
+  },
+  "homepage": "https://github.com/zama-ai/fhevm-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/zama-ai/fhevm-sdk/issues"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "dependencies": {
     "@fhevm/core": "workspace:*"
   },
