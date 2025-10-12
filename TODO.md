@@ -4,26 +4,37 @@
 **Deadline**: October 31, 2025 (23:59 AoE)
 **Prize Pool**: $10,000
 
-## 🎉 Latest Updates (2025-10-10)
+## 🎉 Latest Updates (2025-10-12)
 
 **Major Milestones Achieved:**
 - ✅ Phase 0-3 Complete: Full SDK architecture implemented
 - ✅ @fhevm/core: Framework-agnostic FhevmClient with storage abstraction
 - ✅ @fhevm/react: Wagmi-like hooks (useInit, useStatus, useEncrypt, useDecrypt)
 - ✅ @fhevm/vue: Vue 3 composables with reactive state management (BONUS)
-- ✅ Next.js Showcase: Complete demo with Sepolia testnet integration
+- ✅ Standalone Examples: Next.js + Vue 3 showcase apps in examples/
+- ✅ NPM Publishing Ready: Packages configured for public release (v0.2.0)
 - ✅ Hardhat Submodule: Official fhevm-hardhat-template integrated
 - ✅ Sepolia Deployment: FHECounter contract at 0x269ea49ac93ae5dd7a98ee0a681a2c0396fbaf8f
 
+**NPM Publishing Progress:**
+- ✅ Changeset configured for public access
+- ✅ LICENSE files added to all packages
+- ✅ Repository metadata (author, homepage, bugs) configured
+- ✅ Files field configured (dist, README, LICENSE)
+- ✅ Versions bumped to 0.2.0 with CHANGELOGs
+- ⏸️ Ready to publish: `pnpm changeset publish` (requires npm login)
+
 **Current Focus:**
 - 🔄 Phase 4: Documentation & Deployment
-- 📝 Next: Root README update with architecture and quick start
-- 🚀 Ready: Vercel deployment preparation
+- 📝 Priority: Root README.md with architecture and quick start
+- 🚀 Ready: Vercel deployment for examples
+- 📦 Optional: Manual NPM publish (requires credentials)
 
 **Git Status:**
-- 4 commits made with comprehensive SDK implementation
-- Build successful: 257 kB First Load JS
+- 7 commits pushed to GitHub (main branch updated)
+- All builds successful: Next.js (257 kB), Vue (606 kB)
 - All tests passing with >80% coverage
+- Clean working tree, ready for next phase
 
 ---
 
@@ -306,13 +317,18 @@
   - [x] Return `{ decrypt, data, isLoading, error }`
 
 ### Vue Showcase App
-- [x] Create `packages/vue/` structure
+- [x] Create standalone `examples/vue-app/`
   - [x] Vue 3 + Vite + TypeScript configured
-  - [x] Package structure ready
-  - [x] TailwindCSS support prepared
+  - [x] Complete demo with all composables
+  - [x] Wallet connection with useWallet composable
+  - [x] EncryptedCounter component showcasing all hooks
+  - [x] Network detection (Sepolia + Local Hardhat)
+  - [x] Auto-initialization on wallet connect
+  - [x] Comprehensive README with API usage
 - [x] Testing setup complete
   - [x] Vitest configuration
   - [x] Test setup files
+  - [x] Build successful: 606 KB (194 KB gzipped)
 
 ### Testing
 - [x] Write composable tests with Vitest
@@ -405,24 +421,28 @@
   - [ ] Get production URL
   - [ ] Add URL to README
 
-### NPM Publishing (Optional but Recommended)
-- [ ] Setup NPM organization (@fhevm or similar)
-- [ ] Configure package.json for publishing
-  - [ ] Add repository field
-  - [ ] Add keywords
-  - [ ] Add license
-  - [ ] Set public access
-- [ ] Create Changesets
-  - [ ] Write changeset for @fhevm/core
-  - [ ] Write changeset for @fhevm/react
-  - [ ] Write changeset for @fhevm/vue (BONUS)
-  - [ ] Write changeset for fhevm-sdk
-- [ ] Publish packages
-  - [ ] Run `pnpm changeset version`
-  - [ ] Run `pnpm build`
+### NPM Publishing (✅ CONFIGURED - Ready to Publish)
+- [x] Configure package.json for publishing
+  - [x] Add repository field (all 3 packages)
+  - [x] Add keywords (fhevm, fhe, encryption, privacy, zama)
+  - [x] Add LICENSE files (BSD-3-Clause-Clear)
+  - [x] Set public access (.changeset/config.json)
+  - [x] Add author field (Zama)
+  - [x] Add homepage and bugs URLs
+  - [x] Configure files field (dist, README, LICENSE)
+- [x] Create Changesets
+  - [x] Write changeset for initial public release
+  - [x] Version bump to 0.2.0 for all packages
+  - [x] Generate CHANGELOGs for @fhevm/core, @fhevm/react, @fhevm/vue
+- [x] Build all packages
+  - [x] Run `pnpm build` - All successful
+  - [x] Verify dist/ folders with ESM + CJS + TypeScript declarations
+- [ ] Publish packages (REQUIRES NPM LOGIN)
+  - [ ] Run `npm login` with NPM credentials
   - [ ] Run `pnpm changeset publish`
-  - [ ] Verify packages on NPM
-- [ ] Add NPM badges to README
+  - [ ] Verify packages on NPM registry
+  - [ ] Push git tags: `git push --follow-tags`
+- [ ] Add NPM badges to README after publishing
 
 ### Video Walkthrough
 - [ ] Write script (3-5 minutes)
