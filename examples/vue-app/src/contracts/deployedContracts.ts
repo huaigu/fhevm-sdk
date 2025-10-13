@@ -14,13 +14,13 @@ export const deployedContracts = {
         {
           inputs: [],
           name: "getCount",
-          outputs: [{ internalType: "euint32", name: "", type: "uint256" }],
+          outputs: [{ internalType: "euint32", name: "", type: "bytes32" }],
           stateMutability: "view",
           type: "function",
         },
         {
           inputs: [
-            { internalType: "einput", name: "encryptedValue", type: "bytes32" },
+            { internalType: "externalEuint32", name: "inputEuint32", type: "bytes32" },
             { internalType: "bytes", name: "inputProof", type: "bytes" },
           ],
           name: "increment",
@@ -30,13 +30,69 @@ export const deployedContracts = {
         },
         {
           inputs: [
-            { internalType: "einput", name: "encryptedValue", type: "bytes32" },
+            { internalType: "externalEuint32", name: "inputEuint32", type: "bytes32" },
             { internalType: "bytes", name: "inputProof", type: "bytes" },
           ],
           name: "decrement",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
+        },
+        {
+          inputs: [],
+          name: "requestDecryptCount",
+          outputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "uint256", name: "requestId", type: "uint256" },
+            { internalType: "uint32", name: "decryptedCount", type: "uint32" },
+          ],
+          name: "callbackDecryptCount",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          name: "getDecryptedCount",
+          outputs: [{ internalType: "uint32", name: "", type: "uint32" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          name: "isDecryptionCompleted",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          name: "getDecryptionRequester",
+          outputs: [{ internalType: "address", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "uint256", name: "requestId", type: "uint256" },
+            { indexed: true, internalType: "address", name: "requester", type: "address" },
+          ],
+          name: "DecryptionRequested",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "uint256", name: "requestId", type: "uint256" },
+            { indexed: false, internalType: "uint32", name: "decryptedValue", type: "uint32" },
+          ],
+          name: "DecryptionCompleted",
+          type: "event",
         },
       ] as const,
     },
@@ -49,13 +105,13 @@ export const deployedContracts = {
         {
           inputs: [],
           name: "getCount",
-          outputs: [{ internalType: "euint32", name: "", type: "uint256" }],
+          outputs: [{ internalType: "euint32", name: "", type: "bytes32" }],
           stateMutability: "view",
           type: "function",
         },
         {
           inputs: [
-            { internalType: "einput", name: "encryptedValue", type: "bytes32" },
+            { internalType: "externalEuint32", name: "inputEuint32", type: "bytes32" },
             { internalType: "bytes", name: "inputProof", type: "bytes" },
           ],
           name: "increment",
@@ -65,13 +121,69 @@ export const deployedContracts = {
         },
         {
           inputs: [
-            { internalType: "einput", name: "encryptedValue", type: "bytes32" },
+            { internalType: "externalEuint32", name: "inputEuint32", type: "bytes32" },
             { internalType: "bytes", name: "inputProof", type: "bytes" },
           ],
           name: "decrement",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
+        },
+        {
+          inputs: [],
+          name: "requestDecryptCount",
+          outputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            { internalType: "uint256", name: "requestId", type: "uint256" },
+            { internalType: "uint32", name: "decryptedCount", type: "uint32" },
+          ],
+          name: "callbackDecryptCount",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          name: "getDecryptedCount",
+          outputs: [{ internalType: "uint32", name: "", type: "uint32" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          name: "isDecryptionCompleted",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [{ internalType: "uint256", name: "requestId", type: "uint256" }],
+          name: "getDecryptionRequester",
+          outputs: [{ internalType: "address", name: "", type: "address" }],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "uint256", name: "requestId", type: "uint256" },
+            { indexed: true, internalType: "address", name: "requester", type: "address" },
+          ],
+          name: "DecryptionRequested",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            { indexed: true, internalType: "uint256", name: "requestId", type: "uint256" },
+            { indexed: false, internalType: "uint32", name: "decryptedValue", type: "uint32" },
+          ],
+          name: "DecryptionCompleted",
+          type: "event",
         },
       ] as const,
     },

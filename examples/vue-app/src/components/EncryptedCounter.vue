@@ -28,6 +28,12 @@ const decryptedCount = ref<string>('');
 const isTransacting = ref(false);
 const txError = ref<string>('');
 
+// On-chain decryption state
+const onChainRequestId = ref<string>('');
+const onChainDecrypted = ref<string>('');
+const isRequestingDecryption = ref(false);
+const isPolling = ref(false);
+
 // Auto-initialize when wallet connects
 watch([isConnected, provider], async ([connected, prov]) => {
   if (connected && prov && !isReady.value && !isInitializing.value) {
@@ -168,6 +174,81 @@ watch(decryptedData, (newData) => {
     decryptedCount.value = newData.toString();
   }
 });
+
+// Request on-chain decryption
+const handleRequestOnChainDecryption = async () => {
+  if (!isReady.value || !contract.value || !provider.value) return;
+
+  try {
+    isRequestingDecryption.value = true;
+    txError.value = '';
+
+    const contractInstance = await getContractInstance();
+    if (!contractInstance || !contractInstance.requestDecryptCount) {
+      throw new Error('Failed to get contract instance');
+    }
+
+    const tx = await contractInstance.requestDecryptCount();
+    const receipt = await tx.wait();
+
+    // Extract requestId from DecryptionRequested event
+    const event = receipt.logs.find((log: any) => {
+      try {
+        const parsed = contractInstance.interface.parseLog(log);
+        return parsed?.name === 'DecryptionRequested';
+      } catch {
+        return false;
+      }
+    });
+
+    if (event) {
+      const parsed = contractInstance.interface.parseLog(event);
+      const requestId = parsed?.args.requestId.toString();
+      onChainRequestId.value = requestId;
+
+      // Start polling for result
+      pollDecryptionResult(requestId, contractInstance);
+    }
+  } catch (error: any) {
+    console.error('Failed to request on-chain decryption:', error);
+    txError.value = error.message || 'Failed to request on-chain decryption';
+  } finally {
+    isRequestingDecryption.value = false;
+  }
+};
+
+// Poll for decryption result
+const pollDecryptionResult = async (requestId: string, contractInstance: any) => {
+  isPolling.value = true;
+  const maxAttempts = 30;
+  let attempts = 0;
+
+  const poll = async () => {
+    try {
+      const isCompleted = await contractInstance.isDecryptionCompleted(requestId);
+
+      if (isCompleted) {
+        const decryptedValue = await contractInstance.getDecryptedCount(requestId);
+        onChainDecrypted.value = decryptedValue.toString();
+        isPolling.value = false;
+        return;
+      }
+
+      attempts++;
+      if (attempts < maxAttempts) {
+        setTimeout(poll, 2000); // Poll every 2 seconds
+      } else {
+        console.error('Polling timeout - decryption taking too long');
+        isPolling.value = false;
+      }
+    } catch (error) {
+      console.error('Polling error:', error);
+      isPolling.value = false;
+    }
+  };
+
+  poll();
+};
 </script>
 
 <template>
@@ -311,6 +392,52 @@ watch(decryptedData, (newData) => {
           <p>{{ decryptError.message }}</p>
         </div>
 
+        <!-- On-Chain Decryption -->
+        <div class="divider"></div>
+        <div class="onchain-section">
+          <h3>🔓 Asynchronous On-Chain Decryption</h3>
+          <p class="info-text">
+            Request the decryption oracle to decrypt the encrypted counter value on-chain.
+            The result will be available after the oracle processes the request.
+          </p>
+
+          <button
+            @click="handleRequestOnChainDecryption"
+            :disabled="isRequestingDecryption || isPolling || isTransacting"
+            class="primary"
+          >
+            <span v-if="isRequestingDecryption || isPolling" class="spinner"></span>
+            {{
+              isRequestingDecryption
+                ? 'Requesting...'
+                : isPolling
+                ? 'Waiting for Oracle...'
+                : '📡 Request On-Chain Decryption'
+            }}
+          </button>
+
+          <div v-if="onChainRequestId" class="alert alert-info">
+            <strong>Request ID:</strong>
+            <code>{{ onChainRequestId }}</code>
+          </div>
+
+          <div v-if="onChainDecrypted" class="onchain-result">
+            <div class="result-label">✅ On-Chain Decrypted Count:</div>
+            <div class="result-value">{{ onChainDecrypted }}</div>
+          </div>
+
+          <div class="info-note">
+            <p>
+              <strong>Note:</strong> This demonstrates asynchronous on-chain decryption using
+              FHE.requestDecryption().
+            </p>
+            <p>
+              The decryption oracle processes the request and calls back the contract with the
+              decrypted value.
+            </p>
+          </div>
+        </div>
+
         <!-- Composables Demo -->
         <div class="divider"></div>
         <div class="composables-info">
@@ -335,6 +462,10 @@ watch(decryptedData, (newData) => {
             <div class="composable-item">
               <code>useDecrypt()</code>
               <span>Decrypt contract data</span>
+            </div>
+            <div class="composable-item">
+              <code>requestDecryptCount()</code>
+              <span>Request on-chain decryption via oracle</span>
             </div>
           </div>
         </div>
@@ -490,6 +621,56 @@ watch(decryptedData, (newData) => {
   opacity: 0.7;
 }
 
+.onchain-section {
+  background-color: #0d1117;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.onchain-section h3 {
+  margin: 0;
+}
+
+.info-text {
+  opacity: 0.7;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.onchain-result {
+  background-color: #1a1a1a;
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.result-label {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #10b981;
+}
+
+.result-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #42b883;
+}
+
+.info-note {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  padding: 0.8rem;
+  background-color: #1a1a1a;
+  border-radius: 4px;
+}
+
+.info-note p {
+  margin: 0.3rem 0;
+}
+
 @media (max-width: 768px) {
   .status-grid,
   .operations-grid,
@@ -499,6 +680,10 @@ watch(decryptedData, (newData) => {
 
   .count-value {
     font-size: 3rem;
+  }
+
+  .result-value {
+    font-size: 2rem;
   }
 }
 </style>

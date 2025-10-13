@@ -33,6 +33,10 @@ export function EncryptedCounter() {
 
   // Demo state
   const [value, setValue] = useState<number>(1);
+  const [onChainRequestId, setOnChainRequestId] = useState<string>("");
+  const [onChainDecrypted, setOnChainDecrypted] = useState<string>("");
+  const [isRequestingDecryption, setIsRequestingDecryption] = useState(false);
+  const [isPolling, setIsPolling] = useState(false);
 
   // Get contract for current network
   const contract = chainId && (chainId in deployedContracts)
@@ -86,6 +90,81 @@ export function EncryptedCounter() {
     } catch (error) {
       console.error("Decrypt failed:", error);
     }
+  };
+
+  // On-Chain Decryption: Request
+  const handleRequestOnChainDecryption = async () => {
+    if (!walletClient || !contract) return;
+
+    try {
+      setIsRequestingDecryption(true);
+      const provider = new BrowserProvider(walletClient.transport);
+      const signer = await provider.getSigner();
+      const contractInstance = new (await import("ethers")).Contract(
+        contract.address,
+        contract.abi,
+        signer
+      );
+
+      const tx = await contractInstance.requestDecryptCount();
+      const receipt = await tx.wait();
+
+      // Extract requestId from DecryptionRequested event
+      const event = receipt.logs.find((log: any) => {
+        try {
+          const parsed = contractInstance.interface.parseLog(log);
+          return parsed?.name === "DecryptionRequested";
+        } catch {
+          return false;
+        }
+      });
+
+      if (event) {
+        const parsed = contractInstance.interface.parseLog(event);
+        const requestId = parsed?.args.requestId.toString();
+        setOnChainRequestId(requestId);
+        
+        // Start polling for result
+        pollDecryptionResult(requestId, contractInstance);
+      }
+    } catch (error) {
+      console.error("Request on-chain decryption failed:", error);
+    } finally {
+      setIsRequestingDecryption(false);
+    }
+  };
+
+  // Poll for decryption result
+  const pollDecryptionResult = async (requestId: string, contractInstance: any) => {
+    setIsPolling(true);
+    const maxAttempts = 30;
+    let attempts = 0;
+
+    const poll = async () => {
+      try {
+        const isCompleted = await contractInstance.isDecryptionCompleted(requestId);
+        
+        if (isCompleted) {
+          const decryptedValue = await contractInstance.getDecryptedCount(requestId);
+          setOnChainDecrypted(decryptedValue.toString());
+          setIsPolling(false);
+          return;
+        }
+
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(poll, 2000); // Poll every 2 seconds
+        } else {
+          console.error("Polling timeout - decryption taking too long");
+          setIsPolling(false);
+        }
+      } catch (error) {
+        console.error("Polling error:", error);
+        setIsPolling(false);
+      }
+    };
+
+    poll();
   };
 
   return (
@@ -231,6 +310,70 @@ export function EncryptedCounter() {
           </div>
         )}
 
+        <div className="divider">On-Chain Decryption</div>
+
+        {/* On-Chain Decryption Section */}
+        <div className="bg-base-200 p-4 rounded-lg space-y-4">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-semibold">🔓 Asynchronous On-Chain Decryption</span>
+          </div>
+          <p className="text-sm opacity-70">
+            Request the decryption oracle to decrypt the encrypted counter value on-chain.
+            The result will be available after the oracle processes the request.
+          </p>
+
+          <button
+            onClick={handleRequestOnChainDecryption}
+            className="btn btn-accent"
+            disabled={!isReady || isRequestingDecryption || isPolling || !isConnected || !contract}
+          >
+            {isRequestingDecryption ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Requesting...
+              </>
+            ) : isPolling ? (
+              <>
+                <span className="loading loading-spinner loading-sm"></span>
+                Waiting for Oracle...
+              </>
+            ) : (
+              "📡 Request On-Chain Decryption"
+            )}
+          </button>
+
+          {/* Request ID Display */}
+          {onChainRequestId && (
+            <div className="alert">
+              <div>
+                <span className="font-semibold">Request ID:</span>
+                <code className="ml-2">{onChainRequestId}</code>
+              </div>
+            </div>
+          )}
+
+          {/* Decrypted Result Display */}
+          {onChainDecrypted && (
+            <div className="alert alert-success">
+              <div>
+                <span className="font-semibold">✅ On-Chain Decrypted Count:</span>
+                <div className="text-2xl font-bold mt-2">{onChainDecrypted}</div>
+              </div>
+            </div>
+          )}
+
+          <div className="text-xs opacity-60 space-y-1">
+            <p>
+              <strong>Note:</strong> This demonstrates asynchronous on-chain decryption using
+              FHE.requestDecryption().
+            </p>
+            <p>
+              The decryption oracle processes the request and calls back the contract with the
+              decrypted value.
+            </p>
+          </div>
+        </div>
+
         <div className="divider">About This Demo</div>
 
         {/* Info Section */}
@@ -248,6 +391,9 @@ export function EncryptedCounter() {
             </li>
             <li>
               <code className="text-primary">useDecrypt()</code> - Decrypt results with user signature
+            </li>
+            <li>
+              <code className="text-primary">requestDecryptCount()</code> - Request on-chain decryption via oracle
             </li>
           </ul>
           <p className="mt-4 text-xs">
