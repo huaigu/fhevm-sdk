@@ -50,7 +50,8 @@ export function EncryptedCounter() {
 
   // Auto-initialize when wallet connects
   useEffect(() => {
-    if (isConnected && walletClient && !isReady && !isInitializing && typeof window !== 'undefined') {
+    // Only init if: connected, has wallet, not ready, not initializing, and no error
+    if (isConnected && walletClient && !isReady && !isInitializing && !initError && typeof window !== 'undefined') {
       const initFhevm = async () => {
         try {
           // Use window.ethereum as EIP-1193 provider
@@ -62,7 +63,7 @@ export function EncryptedCounter() {
       initFhevm();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConnected, walletClient, isReady, isInitializing]);
+  }, [isConnected, walletClient, isReady, isInitializing, initError]);
 
   // Handlers
   const handleEncrypt = async () => {
@@ -212,7 +213,17 @@ export function EncryptedCounter() {
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Initialization Error</AlertTitle>
-            <AlertDescription>{initError.message}</AlertDescription>
+            <AlertDescription className="space-y-2">
+              <p>{initError.message}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => init({ provider: window.ethereum as any })}
+                className="mt-2"
+              >
+                Retry Initialization
+              </Button>
+            </AlertDescription>
           </Alert>
         )}
 
