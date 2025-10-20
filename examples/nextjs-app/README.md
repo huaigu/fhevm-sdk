@@ -47,14 +47,17 @@ The app will start at [http://localhost:3000](http://localhost:3000)
    cp .env.example .env.local
    ```
 
-2. Add your Alchemy API key:
+2. (Optional) Add your Alchemy API key for better performance:
    ```env
    NEXT_PUBLIC_ALCHEMY_API_KEY=your_alchemy_api_key_here
    ```
 
+   - **Without API key**: Uses public Sepolia RPC (`https://rpc.sepolia.org`)
+   - **With API key**: Uses Alchemy RPC for faster, more reliable requests
+   
    Get your API key from [Alchemy Dashboard](https://dashboard.alchemy.com/)
 
-3. (Optional) Add WalletConnect Project ID:
+3. (Optional) Add WalletConnect Project ID for enhanced wallet support:
    ```env
    NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=your_project_id
    ```

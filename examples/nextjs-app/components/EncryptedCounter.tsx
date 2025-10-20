@@ -2,9 +2,14 @@
 
 import { useInit, useEncrypt, useDecrypt, useStatus } from "@fhevm/react";
 import { BrowserProvider } from "ethers";
+import { AlertCircle, CheckCircle2, Info, Loader2, Lock, LockOpen, Radio } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAccount, useWalletClient, useChainId } from "wagmi";
 import { deployedContracts, type SupportedChainId } from "~/contracts/deployedContracts";
+import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
+import { Button } from "~/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
+import { Input } from "~/components/ui/input";
 
 /**
  * EncryptedCounter - Demonstration of @fhevm/react hooks
@@ -123,7 +128,7 @@ export function EncryptedCounter() {
         const parsed = contractInstance.interface.parseLog(event);
         const requestId = parsed?.args.requestId.toString();
         setOnChainRequestId(requestId);
-        
+
         // Start polling for result
         pollDecryptionResult(requestId, contractInstance);
       }
@@ -143,7 +148,7 @@ export function EncryptedCounter() {
     const poll = async () => {
       try {
         const isCompleted = await contractInstance.isDecryptionCompleted(requestId);
-        
+
         if (isCompleted) {
           const decryptedValue = await contractInstance.getDecryptedCount(requestId);
           setOnChainDecrypted(decryptedValue.toString());
@@ -168,201 +173,244 @@ export function EncryptedCounter() {
   };
 
   return (
-    <div className="card bg-base-100 shadow-xl">
-      <div className="card-body">
-        <h2 className="card-title text-2xl">🔐 Encrypted Counter Demo</h2>
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-3xl">
+          <Lock className="h-8 w-8" />
+          Encrypted Counter Demo
+        </CardTitle>
+        <CardDescription>
+          Demonstration of @fhevm/react hooks for Fully Homomorphic Encryption
+        </CardDescription>
+      </CardHeader>
 
+      <CardContent className="space-y-6">
         {/* Status Section */}
-        <div className="alert alert-info">
-          <div className="flex items-center gap-2">
-            <span className="font-semibold">FHEVM Status:</span>
-            <span>{status}</span>
-            {isInitializing && <span className="loading loading-spinner loading-sm"></span>}
-            {isReady && <span className="text-success">✅</span>}
-          </div>
-        </div>
+        <Alert variant="info">
+          <Info className="h-4 w-4" />
+          <AlertTitle>FHEVM Status: {status}</AlertTitle>
+          <AlertDescription className="flex items-center gap-2">
+            {isInitializing && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isReady && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+          </AlertDescription>
+        </Alert>
 
         {/* Connection Warning */}
         {!isConnected && (
-          <div className="alert alert-warning">
-            <span>⚠️ Please connect your wallet to use FHEVM features</span>
-          </div>
+          <Alert variant="warning">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Wallet Not Connected</AlertTitle>
+            <AlertDescription>
+              Please connect your wallet to use FHEVM features
+            </AlertDescription>
+          </Alert>
         )}
 
         {/* Initialization Error */}
         {initError && (
-          <div className="alert alert-error">
-            <div>
-              <span className="font-semibold">Init Error:</span>
-              <p className="text-sm">{initError.message}</p>
-            </div>
-          </div>
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Initialization Error</AlertTitle>
+            <AlertDescription>{initError.message}</AlertDescription>
+          </Alert>
         )}
 
         {/* Network Info */}
         {chainId && contract && (
-          <div className="alert">
-            <div className="w-full">
-              <div className="flex justify-between items-center">
+          <Alert>
+            <Info className="h-4 w-4" />
+            <AlertTitle>Network Information</AlertTitle>
+            <AlertDescription>
+              <div className="flex flex-col gap-1 mt-2">
                 <div>
-                  <span className="font-semibold">Network:</span>{" "}
+                  <strong>Network:</strong>{" "}
                   {chainId === 11155111 ? "Sepolia Testnet" : `Chain ID ${chainId}`}
                 </div>
                 <div className="text-xs opacity-70">
                   Contract: {contract.address.slice(0, 6)}...{contract.address.slice(-4)}
                 </div>
               </div>
-            </div>
-          </div>
+            </AlertDescription>
+          </Alert>
         )}
 
         {/* Network Not Supported Warning */}
         {chainId && !contract && (
-          <div className="alert alert-warning">
-            <span>⚠️ Contract not deployed on this network. Please switch to Sepolia testnet.</span>
-          </div>
+          <Alert variant="warning">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Unsupported Network</AlertTitle>
+            <AlertDescription>
+              Contract not deployed on this network. Please switch to Sepolia testnet.
+            </AlertDescription>
+          </Alert>
         )}
-
-        <div className="divider">Encrypt</div>
 
         {/* Encrypt Section */}
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text font-medium">Value to encrypt (euint32)</span>
-          </label>
-          <input
-            type="number"
-            value={value}
-            onChange={(e) => setValue(Number(e.target.value))}
-            className="input input-bordered"
-            disabled={!isReady || isEncrypting}
-            min="0"
-          />
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold flex items-center gap-2">
+            <Lock className="h-5 w-5" />
+            Encrypt
+          </h3>
+
+          <div className="space-y-2">
+            <label htmlFor="encrypt-value" className="text-sm font-medium">
+              Value to encrypt (euint32)
+            </label>
+            <Input
+              id="encrypt-value"
+              type="number"
+              value={value}
+              onChange={(e) => setValue(Number(e.target.value))}
+              disabled={!isReady || isEncrypting}
+              min="0"
+              placeholder="Enter a number"
+            />
+          </div>
+
+          <Button
+            onClick={handleEncrypt}
+            disabled={!isReady || isEncrypting || !isConnected || !contract}
+            className="w-full"
+          >
+            {isEncrypting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Encrypting...
+              </>
+            ) : (
+              <>
+                <Lock className="mr-2 h-4 w-4" />
+                Encrypt Value
+              </>
+            )}
+          </Button>
+
+          {/* Encryption Error */}
+          {encryptError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Encryption Error</AlertTitle>
+              <AlertDescription>{encryptError.message}</AlertDescription>
+            </Alert>
+          )}
+
+          {/* Encrypted Data Display */}
+          {encryptedData && (
+            <div className="rounded-lg bg-muted p-4">
+              <pre className="text-xs overflow-auto">
+                <code>{JSON.stringify(encryptedData, null, 2)}</code>
+              </pre>
+            </div>
+          )}
         </div>
 
-        <button
-          onClick={handleEncrypt}
-          className="btn btn-primary"
-          disabled={!isReady || isEncrypting || !isConnected || !contract}
-        >
-          {isEncrypting ? (
-            <>
-              <span className="loading loading-spinner loading-sm"></span>
-              Encrypting...
-            </>
-          ) : (
-            "🔒 Encrypt Value"
-          )}
-        </button>
-
-        {/* Encryption Error */}
-        {encryptError && (
-          <div className="alert alert-error">
-            <div>
-              <span className="font-semibold">Encrypt Error:</span>
-              <p className="text-sm">{encryptError.message}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Encrypted Data Display */}
-        {encryptedData && (
-          <div className="mockup-code text-xs">
-            <pre><code>{JSON.stringify(encryptedData, null, 2)}</code></pre>
-          </div>
-        )}
-
-        <div className="divider">Decrypt</div>
-
         {/* Decrypt Section */}
-        <button
-          onClick={handleDecrypt}
-          className="btn btn-secondary"
-          disabled={!isReady || isDecrypting || !isConnected || !encryptedData || !contract}
-        >
-          {isDecrypting ? (
-            <>
-              <span className="loading loading-spinner loading-sm"></span>
-              Decrypting...
-            </>
-          ) : (
-            "🔓 Decrypt Value (Demo)"
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold flex items-center gap-2">
+            <LockOpen className="h-5 w-5" />
+            Decrypt
+          </h3>
+
+          <Button
+            onClick={handleDecrypt}
+            variant="secondary"
+            disabled={!isReady || isDecrypting || !isConnected || !encryptedData || !contract}
+            className="w-full"
+          >
+            {isDecrypting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Decrypting...
+              </>
+            ) : (
+              <>
+                <LockOpen className="mr-2 h-4 w-4" />
+                Decrypt Value (Demo)
+              </>
+            )}
+          </Button>
+
+          {/* Decryption Error */}
+          {decryptError && (
+            <Alert variant="destructive">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Decryption Error</AlertTitle>
+              <AlertDescription>{decryptError.message}</AlertDescription>
+            </Alert>
           )}
-        </button>
 
-        {/* Decryption Error */}
-        {decryptError && (
-          <div className="alert alert-error">
-            <div>
-              <span className="font-semibold">Decrypt Error:</span>
-              <p className="text-sm">{decryptError.message}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Decrypted Data Display */}
-        {decryptedData && (
-          <div className="alert alert-success">
-            <div>
-              <span className="font-semibold">✅ Decrypted Result:</span>
-              <pre className="mt-2 text-sm">{JSON.stringify(decryptedData, null, 2)}</pre>
-            </div>
-          </div>
-        )}
-
-        <div className="divider">On-Chain Decryption</div>
+          {/* Decrypted Data Display */}
+          {decryptedData && (
+            <Alert variant="success">
+              <CheckCircle2 className="h-4 w-4" />
+              <AlertTitle>Decrypted Result</AlertTitle>
+              <AlertDescription>
+                <pre className="mt-2 text-sm">
+                  {JSON.stringify(decryptedData, null, 2)}
+                </pre>
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
 
         {/* On-Chain Decryption Section */}
-        <div className="bg-base-200 p-4 rounded-lg space-y-4">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-semibold">🔓 Asynchronous On-Chain Decryption</span>
-          </div>
-          <p className="text-sm opacity-70">
+        <div className="space-y-4 rounded-lg border border-border bg-card p-6">
+          <h3 className="text-xl font-semibold flex items-center gap-2">
+            <Radio className="h-5 w-5" />
+            Asynchronous On-Chain Decryption
+          </h3>
+          <p className="text-sm text-muted-foreground">
             Request the decryption oracle to decrypt the encrypted counter value on-chain.
             The result will be available after the oracle processes the request.
           </p>
 
-          <button
+          <Button
             onClick={handleRequestOnChainDecryption}
-            className="btn btn-accent"
             disabled={!isReady || isRequestingDecryption || isPolling || !isConnected || !contract}
+            className="w-full"
+            variant="outline"
           >
             {isRequestingDecryption ? (
               <>
-                <span className="loading loading-spinner loading-sm"></span>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Requesting...
               </>
             ) : isPolling ? (
               <>
-                <span className="loading loading-spinner loading-sm"></span>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Waiting for Oracle...
               </>
             ) : (
-              "📡 Request On-Chain Decryption"
+              <>
+                <Radio className="mr-2 h-4 w-4" />
+                Request On-Chain Decryption
+              </>
             )}
-          </button>
+          </Button>
 
           {/* Request ID Display */}
           {onChainRequestId && (
-            <div className="alert">
-              <div>
-                <span className="font-semibold">Request ID:</span>
-                <code className="ml-2">{onChainRequestId}</code>
-              </div>
-            </div>
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertTitle>Request ID</AlertTitle>
+              <AlertDescription>
+                <code className="text-xs">{onChainRequestId}</code>
+              </AlertDescription>
+            </Alert>
           )}
 
           {/* Decrypted Result Display */}
           {onChainDecrypted && (
-            <div className="alert alert-success">
-              <div>
-                <span className="font-semibold">✅ On-Chain Decrypted Count:</span>
+            <Alert variant="success">
+              <CheckCircle2 className="h-4 w-4" />
+              <AlertTitle>On-Chain Decrypted Count</AlertTitle>
+              <AlertDescription>
                 <div className="text-2xl font-bold mt-2">{onChainDecrypted}</div>
-              </div>
-            </div>
+              </AlertDescription>
+            </Alert>
           )}
 
-          <div className="text-xs opacity-60 space-y-1">
+          <div className="text-xs text-muted-foreground space-y-1 border-t pt-4">
             <p>
               <strong>Note:</strong> This demonstrates asynchronous on-chain decryption using
               FHE.requestDecryption().
@@ -374,12 +422,13 @@ export function EncryptedCounter() {
           </div>
         </div>
 
-        <div className="divider">About This Demo</div>
-
-        {/* Info Section */}
-        <div className="text-sm opacity-70 space-y-2">
-          <p className="font-medium">This demo showcases the <code>@fhevm/react</code> hooks:</p>
-          <ul className="list-disc list-inside space-y-1 ml-2">
+        {/* About This Demo */}
+        <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-6">
+          <h3 className="text-lg font-semibold">About This Demo</h3>
+          <p className="text-sm text-muted-foreground">
+            This demo showcases the <code className="text-primary">@fhevm/react</code> hooks:
+          </p>
+          <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground ml-2">
             <li>
               <code className="text-primary">useInit()</code> - Initialize FHEVM with your wallet
             </li>
@@ -396,12 +445,12 @@ export function EncryptedCounter() {
               <code className="text-primary">requestDecryptCount()</code> - Request on-chain decryption via oracle
             </li>
           </ul>
-          <p className="mt-4 text-xs">
+          <p className="text-xs text-muted-foreground">
             <strong>Note:</strong> This is a demonstration. In a real application, you would send
             the encrypted data to the smart contract for computation.
           </p>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
