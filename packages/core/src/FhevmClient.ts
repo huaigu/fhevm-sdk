@@ -285,10 +285,55 @@ export class FhevmClient {
       this.instance = (await win.relayerSDK.createInstance(config)) as FhevmInstance;
 
       // Save public key and params
-      const publicKeyString = this.instance.getPublicKey();
-      const publicKeyId = typeof pub.publicKey?.id === 'string'
-        ? pub.publicKey.id
-        : publicKeyString; // Use the key itself as ID if no ID exists
+      // Note: getPublicKey() may return an object with {id, data} or just a string
+      const publicKeyResult = this.instance.getPublicKey() as any;
+      const publicParamsResult = this.instance.getPublicParams(2048) as any;
+
+      // Extract strings from the results
+      let publicKeyString: string;
+      let publicKeyId: string;
+
+      if (typeof publicKeyResult === 'string') {
+        // Old behavior: getPublicKey returns string
+        publicKeyString = publicKeyResult;
+        publicKeyId = pub.publicKey?.id || publicKeyResult;
+      } else if (typeof publicKeyResult === 'object' && publicKeyResult !== null) {
+        // New behavior: getPublicKey returns {id, data} or similar
+        publicKeyString = publicKeyResult.data || publicKeyResult.publicKey || JSON.stringify(publicKeyResult);
+        publicKeyId = publicKeyResult.id || publicKeyResult.publicKeyId || publicKeyString;
+      } else {
+        throw new FhevmError(
+          'INVALID_PUBLIC_KEY',
+          `getPublicKey() returned unexpected type: ${typeof publicKeyResult}`
+        );
+      }
+
+      // Extract public params string
+      let publicParamsString: string;
+      if (typeof publicParamsResult === 'string') {
+        publicParamsString = publicParamsResult;
+      } else if (typeof publicParamsResult === 'object' && publicParamsResult !== null) {
+        publicParamsString = publicParamsResult.data || publicParamsResult.publicParams || JSON.stringify(publicParamsResult);
+      } else {
+        throw new FhevmError(
+          'INVALID_PUBLIC_PARAMS',
+          `getPublicParams() returned unexpected type: ${typeof publicParamsResult}`
+        );
+      }
+
+      // Ensure we have valid strings
+      if (typeof publicKeyId !== 'string' || !publicKeyId) {
+        throw new FhevmError(
+          'INVALID_PUBLIC_KEY_ID',
+          `publicKeyId is not a valid string: ${typeof publicKeyId}`
+        );
+      }
+      if (typeof publicKeyString !== 'string' || !publicKeyString) {
+        throw new FhevmError(
+          'INVALID_PUBLIC_KEY',
+          `publicKey is not a valid string: ${typeof publicKeyString}`
+        );
+      }
 
       await this.publicKeyStorage.set(
         aclAddress,
@@ -298,7 +343,7 @@ export class FhevmClient {
         },
         {
           publicParamsId: 'default',
-          publicParams: this.instance.getPublicParams(2048),
+          publicParams: publicParamsString,
         }
       );
 
