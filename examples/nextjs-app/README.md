@@ -52,7 +52,7 @@ The app will start at [http://localhost:3000](http://localhost:3000)
    NEXT_PUBLIC_ALCHEMY_API_KEY=your_alchemy_api_key_here
    ```
 
-   - **Without API key**: Uses public Sepolia RPC (`https://rpc.sepolia.org`)
+   - **Without API key**: Uses PublicNode Sepolia RPC (`https://ethereum-sepolia-rpc.publicnode.com`)
    - **With API key**: Uses Alchemy RPC for faster, more reliable requests
    
    Get your API key from [Alchemy Dashboard](https://dashboard.alchemy.com/)
@@ -73,7 +73,7 @@ The app will start at [http://localhost:3000](http://localhost:3000)
 - `wagmi` - Ethereum React hooks
 - `@rainbow-me/rainbowkit` - Wallet connection UI
 - `next` - Next.js 15 framework
-- `daisyui` - UI component library
+- `shadcn/ui` - Modern UI component library with Tailwind CSS
 
 ### Project Structure
 

@@ -14,7 +14,7 @@ export const wagmiConfig = getDefaultConfig({
     [sepolia.id]: http(
       process.env.NEXT_PUBLIC_ALCHEMY_API_KEY
         ? `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_API_KEY}`
-        : "https://rpc.sepolia.org" // Public Sepolia RPC (no CORS issues)
+        : "https://ethereum-sepolia-rpc.publicnode.com" // PublicNode Sepolia RPC
     ),
     [hardhat.id]: http("http://127.0.0.1:8545"),
   },
