@@ -1,19 +1,21 @@
-import type { StorageAdapter } from '../types';
+import { FhevmIndexedDBStorage } from '../storage/FhevmIndexedDBStorage';
 
 /**
  * Stored public key structure
+ * Note: Using Uint8Array as in original implementation - IndexedDB supports it natively
  */
 export interface FhevmStoredPublicKey {
   publicKeyId: string;
-  publicKey: string;
+  publicKey: Uint8Array;
 }
 
 /**
  * Stored public params structure
+ * Note: Using Uint8Array as in original implementation - IndexedDB supports it natively
  */
 export interface FhevmStoredPublicParams {
   publicParamsId: string;
-  publicParams: string;
+  publicParams: Uint8Array;
 }
 
 /**
@@ -22,7 +24,7 @@ export interface FhevmStoredPublicParams {
 export interface PublicKeyStorageResult {
   publicKey?: {
     id: string;
-    data: string;
+    data: Uint8Array;
   };
   publicParams: {
     '2048': FhevmStoredPublicParams;
@@ -30,95 +32,23 @@ export interface PublicKeyStorageResult {
 }
 
 /**
- * Type guards and assertions
- */
-function assertFhevmStoredPublicKey(
-  value: unknown
-): asserts value is FhevmStoredPublicKey | null {
-  if (typeof value !== 'object') {
-    throw new Error('FhevmStoredPublicKey must be an object');
-  }
-  if (value === null) {
-    return;
-  }
-  if (!('publicKeyId' in value)) {
-    throw new Error('FhevmStoredPublicKey.publicKeyId does not exist');
-  }
-  if (typeof value.publicKeyId !== 'string') {
-    throw new Error('FhevmStoredPublicKey.publicKeyId must be a string');
-  }
-  if (!('publicKey' in value)) {
-    throw new Error('FhevmStoredPublicKey.publicKey does not exist');
-  }
-  if (typeof value.publicKey !== 'string') {
-    throw new Error('FhevmStoredPublicKey.publicKey must be a string');
-  }
-}
-
-function assertFhevmStoredPublicParams(
-  value: unknown
-): asserts value is FhevmStoredPublicParams | null {
-  if (typeof value !== 'object') {
-    throw new Error('FhevmStoredPublicParams must be an object');
-  }
-  if (value === null) {
-    return;
-  }
-  if (!('publicParamsId' in value)) {
-    throw new Error('FhevmStoredPublicParams.publicParamsId does not exist');
-  }
-  if (typeof value.publicParamsId !== 'string') {
-    throw new Error('FhevmStoredPublicParams.publicParamsId must be a string');
-  }
-  if (!('publicParams' in value)) {
-    throw new Error('FhevmStoredPublicParams.publicParams does not exist');
-  }
-  if (typeof value.publicParams !== 'string') {
-    throw new Error('FhevmStoredPublicParams.publicParams must be a string');
-  }
-}
-
-/**
- * Framework-agnostic public key storage using StorageAdapter
- * Stores public keys and params for ACL addresses
+ * Public key storage using IndexedDB directly
+ * Based on original fhevm-sdk-old implementation
+ * Stores Uint8Array without JSON serialization
  */
 export class PublicKeyStorage {
-  private storage: StorageAdapter;
+  private storage: FhevmIndexedDBStorage;
 
-  constructor(storage: StorageAdapter) {
-    this.storage = storage;
+  constructor() {
+    this.storage = new FhevmIndexedDBStorage();
   }
 
   /**
    * Get public key and params for an ACL address
    */
   async get(aclAddress: `0x${string}`): Promise<PublicKeyStorageResult> {
-    const publicKeyKey = `fhevm:publicKey:${aclAddress}`;
-    const publicParamsKey = `fhevm:publicParams:${aclAddress}`;
-
-    let storedPublicKey: FhevmStoredPublicKey | null = null;
-    try {
-      const pkJson = await this.storage.getItem(publicKeyKey);
-      if (pkJson) {
-        const pk = JSON.parse(pkJson);
-        assertFhevmStoredPublicKey(pk);
-        storedPublicKey = pk;
-      }
-    } catch {
-      // Ignore errors
-    }
-
-    let storedPublicParams: FhevmStoredPublicParams | null = null;
-    try {
-      const ppJson = await this.storage.getItem(publicParamsKey);
-      if (ppJson) {
-        const pp = JSON.parse(ppJson);
-        assertFhevmStoredPublicParams(pp);
-        storedPublicParams = pp;
-      }
-    } catch {
-      // Ignore errors
-    }
+    const storedPublicKey = await this.storage.getPublicKey(aclAddress);
+    const storedPublicParams = await this.storage.getPublicParams(aclAddress);
 
     const publicKeyData = storedPublicKey?.publicKey;
     const publicKeyId = storedPublicKey?.publicKeyId;
@@ -128,7 +58,7 @@ export class PublicKeyStorage {
         }
       : null;
 
-    let publicKey: { id: string; data: string } | undefined = undefined;
+    let publicKey: { id: string; data: Uint8Array } | undefined = undefined;
 
     if (publicKeyId && publicKeyData) {
       publicKey = {
@@ -151,18 +81,12 @@ export class PublicKeyStorage {
     publicKey: FhevmStoredPublicKey | null,
     publicParams: FhevmStoredPublicParams | null
   ): Promise<void> {
-    assertFhevmStoredPublicKey(publicKey);
-    assertFhevmStoredPublicParams(publicParams);
-
-    const publicKeyKey = `fhevm:publicKey:${aclAddress}`;
-    const publicParamsKey = `fhevm:publicParams:${aclAddress}`;
-
     if (publicKey) {
-      await this.storage.setItem(publicKeyKey, JSON.stringify(publicKey));
+      await this.storage.setPublicKey(aclAddress, publicKey);
     }
 
     if (publicParams) {
-      await this.storage.setItem(publicParamsKey, JSON.stringify(publicParams));
+      await this.storage.setPublicParams(aclAddress, publicParams);
     }
   }
 }

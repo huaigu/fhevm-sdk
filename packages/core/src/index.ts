@@ -20,6 +20,7 @@ export type {
 
 // Storage implementations
 export { MemoryStorage, IndexedDBStorage, LocalStorageStorage } from './storage';
+export { FhevmIndexedDBStorage } from './storage/FhevmIndexedDBStorage';
 
 // Utilities (for advanced use cases)
 export {

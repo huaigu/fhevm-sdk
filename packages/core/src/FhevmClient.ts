@@ -157,7 +157,7 @@ export class FhevmClient {
   constructor(config: FhevmConfig = {}) {
     this.config = config;
     this.storage = config.storage || new MemoryStorage();
-    this.publicKeyStorage = new PublicKeyStorage(this.storage);
+    this.publicKeyStorage = new PublicKeyStorage();
   }
 
   /**
@@ -271,36 +271,43 @@ export class FhevmClient {
       throwIfAborted();
 
       // Create instance config
+      // IMPORTANT: Pass publicKey and publicParams as they are from storage
+      // SDK expects: publicKey = {id: string, data: Uint8Array} | undefined
+      //              publicParams = {"2048": {publicParamsId, publicParams}} | null
       const config: FhevmInstanceConfig = {
         ...win.relayerSDK.SepoliaConfig,
         network: params.provider,
-        // Only include publicKey and publicParams if they exist
-        ...(pub.publicKey?.data && { publicKey: pub.publicKey.data }),
-        ...(pub.publicParams?.['2048']?.publicParams && {
-          publicParams: pub.publicParams['2048'].publicParams,
-        }),
+        ...(pub.publicKey && { publicKey: pub.publicKey }),
+        ...(pub.publicParams && { publicParams: pub.publicParams }),
       };
 
       // Create instance
       this.instance = (await win.relayerSDK.createInstance(config)) as FhevmInstance;
 
       // Save public key and params
-      // Note: getPublicKey() may return an object with {id, data} or just a string
+      // Note: getPublicKey() returns {publicKey: Uint8Array, publicKeyId: string}
       const publicKeyResult = this.instance.getPublicKey() as any;
       const publicParamsResult = this.instance.getPublicParams(2048) as any;
 
-      // Extract strings from the results
-      let publicKeyString: string;
+      // Extract Uint8Array and ID from result
+      let publicKeyData: Uint8Array;
       let publicKeyId: string;
 
-      if (typeof publicKeyResult === 'string') {
-        // Old behavior: getPublicKey returns string
-        publicKeyString = publicKeyResult;
-        publicKeyId = pub.publicKey?.id || publicKeyResult;
-      } else if (typeof publicKeyResult === 'object' && publicKeyResult !== null) {
-        // New behavior: getPublicKey returns {id, data} or similar
-        publicKeyString = publicKeyResult.data || publicKeyResult.publicKey || JSON.stringify(publicKeyResult);
-        publicKeyId = publicKeyResult.id || publicKeyResult.publicKeyId || publicKeyString;
+      if (typeof publicKeyResult === 'object' && publicKeyResult !== null) {
+        if (publicKeyResult.publicKey && publicKeyResult.publicKey instanceof Uint8Array) {
+          // Structure: {publicKey: Uint8Array, publicKeyId: string}
+          publicKeyData = publicKeyResult.publicKey;
+          publicKeyId = publicKeyResult.publicKeyId || 'default';
+        } else if (publicKeyResult instanceof Uint8Array) {
+          // Direct Uint8Array
+          publicKeyData = publicKeyResult;
+          publicKeyId = 'default';
+        } else {
+          throw new FhevmError(
+            'INVALID_PUBLIC_KEY',
+            `getPublicKey() returned unexpected structure`
+          );
+        }
       } else {
         throw new FhevmError(
           'INVALID_PUBLIC_KEY',
@@ -308,12 +315,19 @@ export class FhevmClient {
         );
       }
 
-      // Extract public params string
-      let publicParamsString: string;
-      if (typeof publicParamsResult === 'string') {
-        publicParamsString = publicParamsResult;
-      } else if (typeof publicParamsResult === 'object' && publicParamsResult !== null) {
-        publicParamsString = publicParamsResult.data || publicParamsResult.publicParams || JSON.stringify(publicParamsResult);
+      // Extract public params
+      let publicParamsData: Uint8Array;
+      if (typeof publicParamsResult === 'object' && publicParamsResult !== null) {
+        if (publicParamsResult.publicParams && publicParamsResult.publicParams instanceof Uint8Array) {
+          publicParamsData = publicParamsResult.publicParams;
+        } else if (publicParamsResult instanceof Uint8Array) {
+          publicParamsData = publicParamsResult;
+        } else {
+          throw new FhevmError(
+            'INVALID_PUBLIC_PARAMS',
+            `getPublicParams() returned unexpected structure`
+          );
+        }
       } else {
         throw new FhevmError(
           'INVALID_PUBLIC_PARAMS',
@@ -321,29 +335,16 @@ export class FhevmClient {
         );
       }
 
-      // Ensure we have valid strings
-      if (typeof publicKeyId !== 'string' || !publicKeyId) {
-        throw new FhevmError(
-          'INVALID_PUBLIC_KEY_ID',
-          `publicKeyId is not a valid string: ${typeof publicKeyId}`
-        );
-      }
-      if (typeof publicKeyString !== 'string' || !publicKeyString) {
-        throw new FhevmError(
-          'INVALID_PUBLIC_KEY',
-          `publicKey is not a valid string: ${typeof publicKeyString}`
-        );
-      }
-
+      // Store Uint8Array directly (IndexedDB supports it)
       await this.publicKeyStorage.set(
         aclAddress,
         {
           publicKeyId,
-          publicKey: publicKeyString,
+          publicKey: publicKeyData,
         },
         {
           publicParamsId: 'default',
-          publicParams: publicParamsString,
+          publicParams: publicParamsData,
         }
       );
 

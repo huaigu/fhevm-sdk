@@ -3,6 +3,9 @@ import type { StorageAdapter } from '../types';
 /**
  * IndexedDB storage implementation for browser environments
  * Provides persistent storage with better capacity than localStorage
+ *
+ * Note: Unlike localStorage, IndexedDB can store complex objects including Uint8Array
+ * We store values as-is without JSON stringification to preserve Uint8Array
  */
 export class IndexedDBStorage implements StorageAdapter {
   private dbName = 'fhevm-storage';
