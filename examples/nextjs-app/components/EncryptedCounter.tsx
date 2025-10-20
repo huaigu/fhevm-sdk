@@ -61,7 +61,8 @@ export function EncryptedCounter() {
       };
       initFhevm();
     }
-  }, [isConnected, walletClient, isReady, isInitializing, init]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, walletClient, isReady, isInitializing]);
 
   // Handlers
   const handleEncrypt = async () => {

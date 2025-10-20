@@ -3,7 +3,7 @@
 import { FhevmProvider, IndexedDBStorage, MemoryStorage } from "@fhevm/react";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ThemeProvider } from "next-themes";
 import { WagmiProvider } from "wagmi";
 import { wagmiConfig } from "~/lib/wagmiConfig";
@@ -34,19 +34,19 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
     setMounted(true);
   }, []);
 
+  // Memoize storage config to prevent FhevmProvider re-renders
+  const fhevmConfig = useMemo(() => ({
+    storage: mounted && typeof window !== 'undefined'
+      ? new IndexedDBStorage()
+      : new MemoryStorage(),
+  }), [mounted]);
+
   return (
     <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
       <WagmiProvider config={wagmiConfig}>
         <QueryClientProvider client={queryClient}>
           <RainbowKitProvider>
-            <FhevmProvider
-              config={{
-                // Use IndexedDB only in browser, fallback to Memory for SSR
-                storage: mounted && typeof window !== 'undefined'
-                  ? new IndexedDBStorage()
-                  : new MemoryStorage(),
-              }}
-            >
+            <FhevmProvider config={fhevmConfig}>
               <div className="flex flex-col min-h-screen">
                 <Header />
                 {children}
