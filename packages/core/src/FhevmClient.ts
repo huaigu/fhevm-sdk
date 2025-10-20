@@ -285,11 +285,16 @@ export class FhevmClient {
       this.instance = (await win.relayerSDK.createInstance(config)) as FhevmInstance;
 
       // Save public key and params
+      const publicKeyString = this.instance.getPublicKey();
+      const publicKeyId = typeof pub.publicKey?.id === 'string'
+        ? pub.publicKey.id
+        : publicKeyString; // Use the key itself as ID if no ID exists
+
       await this.publicKeyStorage.set(
         aclAddress,
         {
-          publicKeyId: pub.publicKey?.id || this.instance.getPublicKey(),
-          publicKey: this.instance.getPublicKey(),
+          publicKeyId,
+          publicKey: publicKeyString,
         },
         {
           publicParamsId: 'default',
