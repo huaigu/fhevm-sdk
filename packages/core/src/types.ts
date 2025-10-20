@@ -158,8 +158,8 @@ export interface FhevmInstance {
  */
 export interface FhevmInstanceConfig {
   network: Eip1193Provider | string;
-  publicKey: string;
-  publicParams: string;
+  publicKey?: string;
+  publicParams?: string;
   aclContractAddress: `0x${string}`;
   kmsVerifierContractAddress: `0x${string}`;
   inputVerifierContractAddress: `0x${string}`;

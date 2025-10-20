@@ -274,8 +274,11 @@ export class FhevmClient {
       const config: FhevmInstanceConfig = {
         ...win.relayerSDK.SepoliaConfig,
         network: params.provider,
-        publicKey: pub.publicKey?.data || '',
-        publicParams: pub.publicParams?.['2048']?.publicParams || '',
+        // Only include publicKey and publicParams if they exist
+        ...(pub.publicKey?.data && { publicKey: pub.publicKey.data }),
+        ...(pub.publicParams?.['2048']?.publicParams && {
+          publicParams: pub.publicParams['2048'].publicParams,
+        }),
       };
 
       // Create instance
