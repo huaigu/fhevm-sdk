@@ -55,8 +55,10 @@ const shortAddress = computed(() => {
 
 <style scoped>
 .header {
-  background-color: #1a1a1a;
-  border-bottom: 1px solid #ffffff20;
+  background-color: hsl(var(--background, 0 0% 100%) / 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid hsl(var(--border, 240 3.7% 15.9%) / 0.4);
   padding: 1rem 0;
   position: sticky;
   top: 0;
@@ -82,6 +84,7 @@ const shortAddress = computed(() => {
 .brand h1 {
   font-size: 1.5rem;
   margin: 0;
+  color: hsl(var(--foreground, 0 0% 98%));
 }
 
 .framework {
@@ -104,13 +107,14 @@ const shortAddress = computed(() => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #0d1117;
-  border-radius: 4px;
+  background-color: hsl(var(--muted, 240 3.7% 15.9%) / 0.5);
+  border: 1px solid hsl(var(--border, 240 3.7% 15.9%));
+  border-radius: 6px;
 }
 
 .network-label {
   font-size: 0.9rem;
-  opacity: 0.7;
+  color: hsl(var(--muted-foreground, 240 3.8% 46.1%));
 }
 
 .network-name {
@@ -126,9 +130,12 @@ const shortAddress = computed(() => {
 
 .address {
   padding: 0.5rem 1rem;
-  background-color: #0d1117;
-  border-radius: 4px;
+  background-color: hsl(var(--muted, 240 3.7% 15.9%) / 0.5);
+  border: 1px solid hsl(var(--border, 240 3.7% 15.9%));
+  border-radius: 6px;
   font-family: 'Courier New', Courier, monospace;
+  color: hsl(var(--foreground, 0 0% 98%));
+  font-size: 0.9rem;
 }
 
 @media (max-width: 768px) {

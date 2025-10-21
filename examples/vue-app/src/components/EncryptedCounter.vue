@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useWallet } from '@/composables/useWallet';
-import { useInit, useStatus, useEncrypt, useDecrypt, usePublicKey } from '@fhevm/vue';
+import { useInit, useStatus, useEncrypt, useDecrypt } from '@fhevm/vue';
 import { BrowserProvider, Contract } from 'ethers';
 import { deployedContracts, type SupportedChainId } from '@/contracts/deployedContracts';
 
@@ -10,8 +10,7 @@ const { account, chainId, isConnected, provider } = useWallet();
 // FHEVM composables
 const { init, error: initError } = useInit();
 const { isLoading: isInitializing, isReady } = useStatus();
-const { publicKey } = usePublicKey();
-const { encrypt, error: encryptError } = useEncrypt();
+const { encrypt } = useEncrypt();
 const { decrypt, data: decryptedData, isLoading: isDecrypting, error: decryptError } = useDecrypt();
 
 // Contract state
@@ -22,11 +21,11 @@ const contract = computed(() => {
 
 // Counter state
 const incrementValue = ref<number>(1);
-const decrementValue = ref<number>(1);
-const encryptedCount = ref<string>('');
-const decryptedCount = ref<string>('');
-const isTransacting = ref(false);
-const txError = ref<string>('');
+const isSubmitting = ref(false);
+const submitError = ref<string>('');
+
+// User Decryption state (via Relayer)
+const userDecrypted = ref<string>('');
 
 // On-chain decryption state
 const onChainRequestId = ref<string>('');
@@ -54,47 +53,41 @@ const getContractInstance = async () => {
   return new Contract(contract.value.address, contract.value.abi, signer);
 };
 
-// Read encrypted count from contract
-const readCount = async () => {
-  if (!isReady.value || !contract.value || !provider.value) return;
+// User Decryption (via Relayer SDK) - instant, client-side, private
+const handleUserDecrypt = async () => {
+  if (!isReady.value || !contract.value || !provider.value || !account.value) return;
 
   try {
-    isTransacting.value = true;
-    txError.value = '';
-
     const contractInstance = await getContractInstance();
     if (!contractInstance || !contractInstance.getCount) {
       throw new Error('Failed to get contract instance');
     }
 
-    const count = await contractInstance.getCount();
-    encryptedCount.value = count.toString();
+    // Get encrypted counter handle from contract
+    const encryptedCountHandle = await contractInstance.getCount();
 
-    // Decrypt the count
+    // Decrypt using Relayer SDK
     const ethersProvider = new BrowserProvider(provider.value);
     const signer = await ethersProvider.getSigner();
 
     await decrypt(
-      [{ handle: count, contractAddress: contract.value.address }],
+      [{ handle: encryptedCountHandle, contractAddress: contract.value.address }],
       signer
     );
   } catch (error: any) {
-    console.error('Failed to read count:', error);
-    txError.value = error.message || 'Failed to read count';
-  } finally {
-    isTransacting.value = false;
+    console.error('User decrypt failed:', error);
   }
 };
 
-// Increment counter
+// Increment counter - encrypt and submit in one action
 const handleIncrement = async () => {
   if (!isReady.value || !contract.value || !account.value) return;
 
   try {
-    isTransacting.value = true;
-    txError.value = '';
+    isSubmitting.value = true;
+    submitError.value = '';
 
-    // Encrypt the increment value
+    // Step 1: Encrypt the value
     const encrypted = await encrypt({
       value: incrementValue.value,
       type: 'euint32',
@@ -104,7 +97,7 @@ const handleIncrement = async () => {
 
     if (!encrypted) throw new Error('Encryption failed');
 
-    // Send transaction
+    // Step 2: Submit to contract
     const contractInstance = await getContractInstance();
     if (!contractInstance || !contractInstance.increment) {
       throw new Error('Failed to get contract instance');
@@ -117,61 +110,20 @@ const handleIncrement = async () => {
 
     await tx.wait();
 
-    // Read updated count
-    await readCount();
+    console.log('Increment transaction successful:', tx.hash);
   } catch (error: any) {
     console.error('Failed to increment:', error);
-    txError.value = error.message || 'Failed to increment counter';
+    submitError.value = error.message || 'Failed to increment counter';
   } finally {
-    isTransacting.value = false;
+    isSubmitting.value = false;
   }
 };
 
-// Decrement counter
-const handleDecrement = async () => {
-  if (!isReady.value || !contract.value || !account.value) return;
-
-  try {
-    isTransacting.value = true;
-    txError.value = '';
-
-    // Encrypt the decrement value
-    const encrypted = await encrypt({
-      value: decrementValue.value,
-      type: 'euint32',
-      contractAddress: contract.value.address,
-      userAddress: account.value as `0x${string}`,
-    });
-
-    if (!encrypted) throw new Error('Encryption failed');
-
-    // Send transaction
-    const contractInstance = await getContractInstance();
-    if (!contractInstance || !contractInstance.decrement) {
-      throw new Error('Failed to get contract instance');
-    }
-
-    const tx = await contractInstance.decrement(
-      encrypted.handles[0],
-      encrypted.inputProof
-    );
-
-    await tx.wait();
-
-    // Read updated count
-    await readCount();
-  } catch (error: any) {
-    console.error('Failed to decrement:', error);
-    txError.value = error.message || 'Failed to decrement counter';
-  } finally {
-    isTransacting.value = false;
-  }
-};
-
-// Watch for decryption results
+// Watch for user decryption results
 watch(decryptedData, (newData) => {
   if (newData !== undefined && newData !== null) {
-    decryptedCount.value = newData.toString();
+    // Extract the first value from the decrypted data object
+    userDecrypted.value = Object.values(newData)[0]?.toString() || 'N/A';
   }
 });
 
@@ -181,7 +133,6 @@ const handleRequestOnChainDecryption = async () => {
 
   try {
     isRequestingDecryption.value = true;
-    txError.value = '';
 
     const contractInstance = await getContractInstance();
     if (!contractInstance || !contractInstance.requestDecryptCount) {
@@ -211,35 +162,47 @@ const handleRequestOnChainDecryption = async () => {
     }
   } catch (error: any) {
     console.error('Failed to request on-chain decryption:', error);
-    txError.value = error.message || 'Failed to request on-chain decryption';
   } finally {
     isRequestingDecryption.value = false;
   }
 };
 
-// Poll for decryption result
+// Poll for decryption result with auto-update (3s intervals, 60s max)
 const pollDecryptionResult = async (requestId: string, contractInstance: any) => {
   isPolling.value = true;
-  const maxAttempts = 30;
+  onChainDecrypted.value = '0'; // Set initial value to show "processing" state
+
+  const maxAttempts = 20; // 20 attempts * 3 seconds = 60 seconds (1 minute)
   let attempts = 0;
+  const pollInterval = 3000; // Poll every 3 seconds
 
   const poll = async () => {
     try {
+      // Get the decrypted value directly
+      const decryptedValue = await contractInstance.getDecryptedCount(requestId);
+      const valueStr = decryptedValue.toString();
+
+      // Update the display with current value (even if 0)
+      onChainDecrypted.value = valueStr;
+
+      // Check if decryption is complete
       const isCompleted = await contractInstance.isDecryptionCompleted(requestId);
 
-      if (isCompleted) {
-        const decryptedValue = await contractInstance.getDecryptedCount(requestId);
-        onChainDecrypted.value = decryptedValue.toString();
+      if (isCompleted && valueStr !== '0') {
+        // Decryption completed successfully
+        console.log(`Decryption completed! Value: ${valueStr}`);
         isPolling.value = false;
         return;
       }
 
       attempts++;
       if (attempts < maxAttempts) {
-        setTimeout(poll, 2000); // Poll every 2 seconds
+        console.log(`Polling attempt ${attempts}/${maxAttempts}, current value: ${valueStr}`);
+        setTimeout(poll, pollInterval);
       } else {
-        console.error('Polling timeout - decryption taking too long');
+        console.warn('Polling timeout after 1 minute - callback may take longer');
         isPolling.value = false;
+        // Keep the last fetched value displayed
       }
     } catch (error) {
       console.error('Polling error:', error);
@@ -247,7 +210,8 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
     }
   };
 
-  poll();
+  // Start polling after a short delay to give the oracle time to process
+  setTimeout(poll, 2000);
 };
 </script>
 
@@ -256,20 +220,13 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
     <div class="card">
       <h2>🔐 Encrypted Counter Demo</h2>
       <p class="description">
-        Fully Homomorphic Encryption (FHE) allows computation on encrypted data without decryption.
-        This demo showcases all FHEVM SDK composables in action.
+        Demonstration of @fhevm/vue composables for Fully Homomorphic Encryption
       </p>
 
-      <!-- Network Status -->
-      <div v-if="!contract" class="alert alert-warning">
-        <strong>⚠️ Unsupported Network</strong>
-        <p>Please switch to Sepolia Testnet or Local Hardhat Network</p>
-      </div>
-
-      <!-- Connection Status -->
-      <div v-if="!isConnected" class="alert alert-info">
-        <strong>👋 Welcome!</strong>
-        <p>Connect your wallet to interact with the encrypted counter</p>
+      <!-- Connection Warning -->
+      <div v-if="!isConnected" class="alert alert-warning">
+        <strong>⚠️ Wallet Not Connected</strong>
+        <p>Please connect your wallet to use FHEVM features</p>
       </div>
 
       <!-- Initialization Status -->
@@ -285,126 +242,115 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
         <p>{{ initError.message }}</p>
       </div>
 
+      <!-- Network Status -->
+      <div v-else-if="!contract" class="alert alert-warning">
+        <strong>⚠️ Unsupported Network</strong>
+        <p>Contract not deployed on this network. Please switch to Sepolia testnet.</p>
+      </div>
+
       <!-- Ready State -->
       <div v-else-if="isReady && contract" class="demo-section">
-        <!-- Status Info -->
-        <div class="status-grid">
-          <div class="status-item">
-            <span class="status-label">SDK Status:</span>
-            <span class="status-value success">✅ Ready</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">Public Key:</span>
-            <span class="status-value">{{ publicKey ? '✅ Loaded' : '⏳ Loading...' }}</span>
-          </div>
-          <div class="status-item">
-            <span class="status-label">Contract:</span>
-            <span class="status-value code">{{ contract.address.slice(0, 10) }}...</span>
+        <!-- Network Info -->
+        <div class="alert alert-info">
+          <strong>ℹ️ Network Information</strong>
+          <div class="network-info">
+            <div>
+              <strong>Network:</strong>
+              {{ chainId === 11155111 ? 'Sepolia Testnet' : `Chain ID ${chainId}` }}
+            </div>
+            <div class="contract-address">
+              Contract: {{ contract.address.slice(0, 6) }}...{{ contract.address.slice(-4) }}
+            </div>
           </div>
         </div>
 
-        <div class="divider"></div>
+        <!-- Section 1: Increment Counter -->
+        <div class="section-card">
+          <h3 class="section-title">🔒 Increment Counter</h3>
+          <div class="input-group">
+            <label>Value to add (encrypted as euint32)</label>
+            <input
+              v-model.number="incrementValue"
+              type="number"
+              min="0"
+              :disabled="!isReady || isSubmitting"
+              placeholder="Enter a number"
+            />
+          </div>
 
-        <!-- Counter Display -->
-        <div class="counter-display">
-          <h3>Current Count</h3>
-          <div v-if="decryptedCount" class="count-value">
-            {{ decryptedCount }}
-          </div>
-          <div v-else class="count-placeholder">
-            Click "Read Count" to decrypt the current value
-          </div>
           <button
-            @click="readCount"
-            :disabled="isTransacting || isDecrypting"
-            class="primary"
+            @click="handleIncrement"
+            :disabled="!isReady || isSubmitting || !isConnected || !contract"
+            class="primary full-width"
           >
-            <span v-if="isTransacting || isDecrypting" class="spinner"></span>
-            {{ isDecrypting ? 'Decrypting...' : 'Read Count' }}
+            <span v-if="isSubmitting" class="spinner"></span>
+            {{ isSubmitting ? 'Submitting...' : '🔒 Encrypt & Increment' }}
           </button>
-          <div v-if="encryptedCount" class="encrypted-info">
-            <code>Encrypted: {{ encryptedCount.slice(0, 20) }}...</code>
+
+          <!-- Submit Error -->
+          <div v-if="submitError" class="alert alert-error">
+            <strong>❌ Transaction Error</strong>
+            <p>{{ submitError }}</p>
           </div>
         </div>
 
-        <div class="divider"></div>
-
-        <!-- Operations -->
-        <div class="operations-grid">
-          <!-- Increment -->
-          <div class="operation-card">
-            <h3>➕ Increment</h3>
-            <p>Encrypt a value and add it to the counter</p>
-            <div class="input-group">
-              <label>Amount:</label>
-              <input
-                v-model.number="incrementValue"
-                type="number"
-                min="1"
-                :disabled="isTransacting"
-              />
-            </div>
-            <button
-              @click="handleIncrement"
-              :disabled="isTransacting || !publicKey"
-              class="primary"
-            >
-              <span v-if="isTransacting" class="spinner"></span>
-              {{ isTransacting ? 'Processing...' : 'Increment' }}
-            </button>
-          </div>
-
-          <!-- Decrement -->
-          <div class="operation-card">
-            <h3>➖ Decrement</h3>
-            <p>Encrypt a value and subtract it from the counter</p>
-            <div class="input-group">
-              <label>Amount:</label>
-              <input
-                v-model.number="decrementValue"
-                type="number"
-                min="1"
-                :disabled="isTransacting"
-              />
-            </div>
-            <button
-              @click="handleDecrement"
-              :disabled="isTransacting || !publicKey"
-              class="secondary"
-            >
-              <span v-if="isTransacting" class="spinner"></span>
-              {{ isTransacting ? 'Processing...' : 'Decrement' }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Errors -->
-        <div v-if="txError" class="alert alert-error">
-          <strong>❌ Transaction Error</strong>
-          <p>{{ txError }}</p>
-        </div>
-        <div v-if="encryptError" class="alert alert-error">
-          <strong>❌ Encryption Error</strong>
-          <p>{{ encryptError.message }}</p>
-        </div>
-        <div v-if="decryptError" class="alert alert-error">
-          <strong>❌ Decryption Error</strong>
-          <p>{{ decryptError.message }}</p>
-        </div>
-
-        <!-- On-Chain Decryption -->
-        <div class="divider"></div>
-        <div class="onchain-section">
-          <h3>🔓 Asynchronous On-Chain Decryption</h3>
-          <p class="info-text">
-            Request the decryption oracle to decrypt the encrypted counter value on-chain.
-            The result will be available after the oracle processes the request.
+        <!-- Section 2: User Decryption (via Relayer SDK) -->
+        <div class="section-card highlighted">
+          <h3 class="section-title">🔓 User Decryption (via Relayer)</h3>
+          <p class="section-description">
+            Decrypt the current counter value instantly using the Relayer SDK.
+            This requires a one-time signature and keeps the decrypted data client-side.
           </p>
 
           <button
+            @click="handleUserDecrypt"
+            :disabled="!isReady || isDecrypting || !isConnected || !contract"
+            class="secondary full-width"
+          >
+            <span v-if="isDecrypting" class="spinner"></span>
+            {{ isDecrypting ? 'Decrypting...' : '🔓 Decrypt via Relayer' }}
+          </button>
+
+          <!-- Decryption Error -->
+          <div v-if="decryptError" class="alert alert-error">
+            <strong>❌ Decryption Error</strong>
+            <p>{{ decryptError.message }}</p>
+          </div>
+
+          <!-- Decrypted Result -->
+          <div v-if="userDecrypted" class="alert alert-success">
+            <strong>✅ Decrypted Counter Value</strong>
+            <div class="result-value-large">{{ userDecrypted }}</div>
+          </div>
+
+          <div class="info-box">
+            <p>
+              <strong>How it works:</strong> The contract uses <code>FHE.allow()</code> to grant
+              you permission to decrypt the counter value via the Relayer SDK.
+            </p>
+            <p>
+              <strong>Benefits:</strong> ⚡ Instant result (no waiting), one-time signature (365 days), private client-side data.
+            </p>
+          </div>
+        </div>
+
+        <!-- Section 3: On-Chain Decryption (via Oracle) -->
+        <div class="section-card highlighted">
+          <h3 class="section-title">📡 Asynchronous On-Chain Decryption</h3>
+          <p class="section-description">
+            Request the decryption oracle to decrypt the encrypted counter value on-chain.
+            The oracle needs time to process - the callback takes a few moments to complete.
+          </p>
+
+          <div class="alert alert-info blue">
+            <strong>🔄 Auto-Polling:</strong> After requesting decryption, the app will automatically check for results
+            every 3 seconds for up to 1 minute. You'll see the value update automatically when the oracle callback completes.
+          </div>
+
+          <button
             @click="handleRequestOnChainDecryption"
-            :disabled="isRequestingDecryption || isPolling || isTransacting"
-            class="primary"
+            :disabled="!isReady || isRequestingDecryption || isPolling || !isConnected || !contract"
+            class="tertiary full-width"
           >
             <span v-if="isRequestingDecryption || isPolling" class="spinner"></span>
             {{
@@ -416,58 +362,71 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
             }}
           </button>
 
+          <!-- Request ID Display -->
           <div v-if="onChainRequestId" class="alert alert-info">
             <strong>Request ID:</strong>
-            <code>{{ onChainRequestId }}</code>
+            <code class="request-id">{{ onChainRequestId }}</code>
           </div>
 
-          <div v-if="onChainDecrypted" class="onchain-result">
-            <div class="result-label">✅ On-Chain Decrypted Count:</div>
-            <div class="result-value">{{ onChainDecrypted }}</div>
+          <!-- Decrypted Result Display -->
+          <div v-if="onChainDecrypted" :class="['alert', onChainDecrypted === '0' ? 'alert-warning' : 'alert-success']">
+            <strong>{{ onChainDecrypted === '0' ? '⏰ Callback Not Complete Yet' : '✅ On-Chain Decrypted Count' }}</strong>
+            <div class="result-value-large">
+              {{ onChainDecrypted }}
+              <span v-if="onChainDecrypted === '0'" class="pending-badge">(pending)</span>
+            </div>
+            <div v-if="onChainDecrypted === '0'" class="warning-text">
+              <p><strong>⏳ Oracle is processing...</strong> The decryption callback hasn't completed yet.</p>
+              <p>When the value changes from 0 to the actual count, the decryption is complete.</p>
+              <p>Auto-polling will continue checking every 3 seconds...</p>
+            </div>
           </div>
 
-          <div class="info-note">
+          <div class="info-box">
             <p>
-              <strong>Note:</strong> This demonstrates asynchronous on-chain decryption using
-              FHE.requestDecryption().
+              <strong>How it works:</strong> The contract uses <code>FHE.requestDecryption()</code> to request on-chain decryption.
+              The oracle processes the request and calls back with the decrypted value.
             </p>
             <p>
-              The decryption oracle processes the request and calls back the contract with the
-              decrypted value.
+              <strong>Use case:</strong> When you need public, verifiable decryption results stored on-chain.
             </p>
           </div>
         </div>
 
-        <!-- Composables Demo -->
-        <div class="divider"></div>
-        <div class="composables-info">
-          <h3>🎯 FHEVM Vue Composables in Action</h3>
-          <div class="composables-grid">
-            <div class="composable-item">
-              <code>useInit()</code>
-              <span>Initialize SDK with provider</span>
-            </div>
-            <div class="composable-item">
-              <code>useStatus()</code>
-              <span>Track initialization status</span>
-            </div>
-            <div class="composable-item">
-              <code>usePublicKey()</code>
-              <span>Get encryption public key</span>
-            </div>
-            <div class="composable-item">
-              <code>useEncrypt()</code>
-              <span>Encrypt values for transactions</span>
-            </div>
-            <div class="composable-item">
-              <code>useDecrypt()</code>
-              <span>Decrypt contract data</span>
-            </div>
-            <div class="composable-item">
-              <code>requestDecryptCount()</code>
-              <span>Request on-chain decryption via oracle</span>
-            </div>
-          </div>
+        <!-- Comparison Table -->
+        <div class="comparison-section">
+          <h3>📊 Decryption Methods Comparison</h3>
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>User Decryption (Relayer)</th>
+                <th>On-Chain Decryption (Oracle)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Speed</strong></td>
+                <td>⚡ Instant</td>
+                <td>⏳ Async (few moments)</td>
+              </tr>
+              <tr>
+                <td><strong>Visibility</strong></td>
+                <td>🔒 Private (client-side)</td>
+                <td>🌐 Public (on-chain)</td>
+              </tr>
+              <tr>
+                <td><strong>Signature</strong></td>
+                <td>✅ One-time (365 days)</td>
+                <td>🔄 Per request</td>
+              </tr>
+              <tr>
+                <td><strong>Use Case</strong></td>
+                <td>Personal data viewing</td>
+                <td>Public verification needed</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -492,75 +451,24 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
   gap: 1.5rem;
 }
 
-.status-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.status-item {
+/* Network Info */
+.network-info {
+  margin-top: 0.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
 }
 
-.status-label {
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-
-.status-value {
-  font-weight: 600;
-}
-
-.status-value.success {
-  color: #10b981;
-}
-
-.status-value.code {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 0.9rem;
-}
-
-.counter-display {
-  text-align: center;
-  padding: 2rem;
-  background-color: #0d1117;
-  border-radius: 8px;
-}
-
-.counter-display h3 {
-  margin-bottom: 1rem;
-  opacity: 0.8;
-}
-
-.count-value {
-  font-size: 4rem;
-  font-weight: 700;
-  color: #42b883;
-  margin: 1rem 0;
-}
-
-.count-placeholder {
-  font-size: 1.2rem;
-  opacity: 0.6;
-  margin: 2rem 0;
-}
-
-.encrypted-info {
-  margin-top: 1rem;
+.contract-address {
   font-size: 0.85rem;
-  opacity: 0.6;
+  opacity: 0.7;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-.operations-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-}
-
-.operation-card {
-  background-color: #0d1117;
+/* Section Cards */
+.section-card {
+  background-color: hsl(var(--card, 0 0% 100%));
+  border: 1px solid hsl(var(--border, 240 3.7% 15.9%));
   border-radius: 8px;
   padding: 1.5rem;
   display: flex;
@@ -568,16 +476,26 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
   gap: 1rem;
 }
 
-.operation-card h3 {
-  margin: 0;
+.section-card.highlighted {
+  background-color: hsl(var(--card, 0 0% 100%));
+  border: 1px solid hsl(var(--border, 240 3.7% 15.9%));
 }
 
-.operation-card p {
+.section-title {
+  margin: 0;
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-description {
   margin: 0;
   opacity: 0.7;
   font-size: 0.9rem;
 }
 
+/* Input Groups */
 .input-group {
   display: flex;
   flex-direction: column;
@@ -589,101 +507,152 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
   font-weight: 500;
 }
 
-.composables-info {
-  background-color: #0d1117;
-  border-radius: 8px;
-  padding: 1.5rem;
+/* Buttons */
+button.full-width {
+  width: 100%;
 }
 
-.composables-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
+button.primary {
+  background-color: #42b883;
+  color: #fff;
 }
 
-.composable-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  padding: 0.8rem;
-  background-color: #1a1a1a;
-  border-radius: 4px;
+button.secondary {
+  background-color: #3b82f6;
+  color: #fff;
 }
 
-.composable-item code {
-  color: #42b883;
-  font-weight: 600;
+button.tertiary {
+  background-color: #8b5cf6;
+  color: #fff;
 }
 
-.composable-item span {
+/* Info Boxes */
+.info-box {
   font-size: 0.85rem;
-  opacity: 0.7;
+  color: hsl(var(--muted-foreground, 240 3.8% 46.1%));
+  padding: 1rem;
+  background-color: transparent;
+  border-radius: 4px;
+  border-top: 1px solid hsl(var(--border, 240 3.7% 15.9%));
+  padding-top: 1rem;
+  margin-top: 0.5rem;
 }
 
-.onchain-section {
-  background-color: #0d1117;
-  border-radius: 8px;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.info-box p {
+  margin: 0.5rem 0;
+  line-height: 1.5;
 }
 
-.onchain-section h3 {
-  margin: 0;
+.info-box code {
+  background-color: hsl(var(--muted, 240 3.7% 15.9%));
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.9em;
 }
 
-.info-text {
-  opacity: 0.7;
-  font-size: 0.9rem;
-  margin: 0;
+/* Alerts */
+.alert.blue {
+  background-color: #dbeafe;
+  border-color: #93c5fd;
+  color: #1e40af;
 }
 
-.onchain-result {
-  background-color: #1a1a1a;
-  border-radius: 8px;
-  padding: 1.5rem;
-  text-align: center;
+.alert.alert-warning {
+  background-color: #fef3c7;
+  border-color: #fcd34d;
+  color: #92400e;
 }
 
-.result-label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: #10b981;
+.alert.alert-success {
+  background-color: #d1fae5;
+  border-color: #6ee7b7;
+  color: #065f46;
 }
 
-.result-value {
+/* Result Values */
+.result-value-large {
   font-size: 2.5rem;
   font-weight: 700;
   color: #42b883;
+  margin-top: 0.5rem;
+  text-align: center;
 }
 
-.info-note {
-  font-size: 0.8rem;
+.pending-badge {
+  font-size: 0.9rem;
   opacity: 0.6;
-  padding: 0.8rem;
-  background-color: #1a1a1a;
-  border-radius: 4px;
+  margin-left: 0.5rem;
 }
 
-.info-note p {
+.warning-text {
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  opacity: 0.8;
+}
+
+.warning-text p {
   margin: 0.3rem 0;
 }
 
+.request-id {
+  font-size: 0.85rem;
+  word-break: break-all;
+}
+
+/* Comparison Table */
+.comparison-section {
+  background-color: hsl(var(--card, 0 0% 100%));
+  border: 1px solid hsl(var(--border, 240 3.7% 15.9%));
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.comparison-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid hsl(var(--border, 240 3.7% 15.9%));
+}
+
+.comparison-table thead th {
+  background-color: hsl(var(--muted, 240 3.7% 15.9%));
+  font-weight: 600;
+  color: hsl(var(--foreground, 0 0% 98%));
+}
+
+.comparison-table tbody tr:hover {
+  background-color: hsl(var(--muted, 240 3.7% 15.9%) / 0.3);
+}
+
+.comparison-table tbody td:first-child {
+  font-weight: 500;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-  .status-grid,
-  .operations-grid,
-  .composables-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .count-value {
-    font-size: 3rem;
-  }
-
-  .result-value {
+  .result-value-large {
     font-size: 2rem;
+  }
+
+  .comparison-table {
+    font-size: 0.8rem;
+  }
+
+  .comparison-table th,
+  .comparison-table td {
+    padding: 0.5rem;
   }
 }
 </style>
