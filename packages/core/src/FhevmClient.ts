@@ -391,22 +391,22 @@ export class FhevmClient {
         input.addBool(Boolean(params.value));
         break;
       case 'euint8':
-        input.addUint8(Number(params.value));
+        input.add8(Number(params.value));
         break;
       case 'euint16':
-        input.addUint16(Number(params.value));
+        input.add16(Number(params.value));
         break;
       case 'euint32':
-        input.addUint32(Number(params.value));
+        input.add32(Number(params.value));
         break;
       case 'euint64':
-        input.addUint64(BigInt(params.value));
+        input.add64(BigInt(params.value));
         break;
       case 'euint128':
-        input.addUint128(BigInt(params.value));
+        input.add128(BigInt(params.value));
         break;
       case 'euint256':
-        input.addUint256(BigInt(params.value));
+        input.add256(BigInt(params.value));
         break;
       case 'eaddress':
         input.addAddress(String(params.value));

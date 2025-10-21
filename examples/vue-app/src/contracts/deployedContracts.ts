@@ -9,7 +9,7 @@ export const deployedContracts = {
   // Sepolia Testnet
   11155111: {
     FHECounter: {
-      address: "0x269ea49ac93ae5dd7a98ee0a681a2c0396fbaf8f" as `0x${string}`,
+      address: "0x4624Ef3b9131C0D6407Ff5AFa175e649A5b0610D" as `0x${string}`,
       abi: [
         {
           inputs: [],
@@ -48,10 +48,11 @@ export const deployedContracts = {
         {
           inputs: [
             { internalType: "uint256", name: "requestId", type: "uint256" },
-            { internalType: "uint32", name: "decryptedCount", type: "uint32" },
+            { internalType: "bytes", name: "cleartexts", type: "bytes" },
+            { internalType: "bytes", name: "decryptionProof", type: "bytes" },
           ],
           name: "callbackDecryptCount",
-          outputs: [],
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
           stateMutability: "nonpayable",
           type: "function",
         },
@@ -139,10 +140,11 @@ export const deployedContracts = {
         {
           inputs: [
             { internalType: "uint256", name: "requestId", type: "uint256" },
-            { internalType: "uint32", name: "decryptedCount", type: "uint32" },
+            { internalType: "bytes", name: "cleartexts", type: "bytes" },
+            { internalType: "bytes", name: "decryptionProof", type: "bytes" },
           ],
           name: "callbackDecryptCount",
-          outputs: [],
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
           stateMutability: "nonpayable",
           type: "function",
         },
