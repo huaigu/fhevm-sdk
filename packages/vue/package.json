@@ -1,6 +1,6 @@
 {
   "name": "@0xbojack/fhevm-vue",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Vue 3 composables for FHEVM SDK",
   "type": "module",
   "main": "./dist/index.js",
@@ -40,12 +40,12 @@
   "license": "BSD-3-Clause-Clear",
   "repository": {
     "type": "git",
-    "url": "https://github.com/zama-ai/fhevm-sdk.git",
+    "url": "https://github.com/huaigu/fhevm-sdk.git",
     "directory": "packages/vue"
   },
-  "homepage": "https://github.com/zama-ai/fhevm-sdk#readme",
+  "homepage": "https://github.com/huaigu/fhevm-sdk/tree/main/packages/vue#readme",
   "bugs": {
-    "url": "https://github.com/zama-ai/fhevm-sdk/issues"
+    "url": "https://github.com/huaigu/fhevm-sdk/issues"
   },
   "files": [
     "dist",
