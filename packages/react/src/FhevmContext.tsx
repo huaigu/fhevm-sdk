@@ -1,5 +1,5 @@
 import { createContext, useContext, ReactNode, useMemo, useCallback, useState } from 'react';
-import { FhevmClient, type FhevmConfig, type FhevmStatus } from '@fhevm/core';
+import { FhevmClient, type FhevmConfig, type FhevmStatus } from '@0xbojack/fhevm-core';
 
 /**
  * FHEVM Context value
@@ -29,7 +29,7 @@ export interface FhevmProviderProps {
  * @example
  * ```tsx
  * import { FhevmProvider } from '@fhevm/react';
- * import { IndexedDBStorage } from '@fhevm/core';
+ * import { IndexedDBStorage } from '@0xbojack/fhevm-core';
  *
  * function App() {
  *   return (

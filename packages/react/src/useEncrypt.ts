@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { EncryptParams, EncryptResult } from '@fhevm/core';
+import type { EncryptParams, EncryptResult } from '@0xbojack/fhevm-core';
 import { useFhevmContext } from './FhevmContext';
 
 /**

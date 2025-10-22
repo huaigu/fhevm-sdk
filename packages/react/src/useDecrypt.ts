@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { DecryptRequest, DecryptResult } from '@fhevm/core';
+import type { DecryptRequest, DecryptResult } from '@0xbojack/fhevm-core';
 import type { JsonRpcSigner } from 'ethers';
 import { useFhevmContext } from './FhevmContext';
 

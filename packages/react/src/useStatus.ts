@@ -1,4 +1,4 @@
-import type { FhevmStatus } from '@fhevm/core';
+import type { FhevmStatus } from '@0xbojack/fhevm-core';
 import { useFhevmContext } from './FhevmContext';
 
 /**

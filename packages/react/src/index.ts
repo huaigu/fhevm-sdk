@@ -29,7 +29,7 @@ export type {
   DecryptRequest,
   DecryptResult,
   StorageAdapter,
-} from '@fhevm/core';
+} from '@0xbojack/fhevm-core';
 
 // Re-export storage adapters
-export { MemoryStorage, IndexedDBStorage, LocalStorageStorage } from '@fhevm/core';
+export { MemoryStorage, IndexedDBStorage, LocalStorageStorage } from '@0xbojack/fhevm-core';

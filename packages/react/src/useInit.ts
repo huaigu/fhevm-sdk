@@ -1,6 +1,6 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
-import type { InitParams, FhevmInstance, FhevmStatus } from '@fhevm/core';
-import { FhevmAbortError } from '@fhevm/core';
+import type { InitParams, FhevmInstance, FhevmStatus } from '@0xbojack/fhevm-core';
+import { FhevmAbortError } from '@0xbojack/fhevm-core';
 import { useFhevmContext } from './FhevmContext';
 
 /**
