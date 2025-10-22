@@ -405,6 +405,9 @@ export class FhevmClient {
       case 'euint128':
         input.add128(BigInt(params.value));
         break;
+      case 'euint160':
+        input.add160(BigInt(params.value));
+        break;
       case 'euint256':
         input.add256(BigInt(params.value));
         break;

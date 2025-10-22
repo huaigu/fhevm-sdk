@@ -56,6 +56,7 @@ export type EncryptedType =
   | 'euint32'
   | 'euint64'
   | 'euint128'
+  | 'euint160'
   | 'euint256'
   | 'eaddress';
 
