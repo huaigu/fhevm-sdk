@@ -1,5 +1,5 @@
 {
-  "name": "@fhevm/vue",
+  "name": "@0xbojack/fhevm-vue",
   "version": "0.2.0",
   "description": "Vue 3 composables for FHEVM SDK",
   "type": "module",
@@ -18,8 +18,13 @@
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm build"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "sideEffects": false,
   "keywords": [
     "fhevm",
     "fhe",
@@ -48,7 +53,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@fhevm/core": "workspace:*"
+    "@0xbojack/fhevm-core": "^0.2.0"
   },
   "peerDependencies": {
     "vue": "^3.0.0",

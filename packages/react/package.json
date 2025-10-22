@@ -1,5 +1,5 @@
 {
-  "name": "@fhevm/react",
+  "name": "@0xbojack/fhevm-react",
   "version": "0.2.0",
   "description": "React hooks for FHEVM SDK",
   "type": "module",
@@ -18,8 +18,13 @@
     "dev": "tsup --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "pnpm build"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "sideEffects": false,
   "keywords": [
     "fhevm",
     "fhe",
@@ -47,7 +52,7 @@
     "LICENSE"
   ],
   "dependencies": {
-    "@fhevm/core": "workspace:*"
+    "@0xbojack/fhevm-core": "^0.2.0"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",

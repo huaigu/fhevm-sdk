@@ -1,5 +1,5 @@
 {
-  "name": "@fhevm/core",
+  "name": "@0xbojack/fhevm-core",
   "version": "0.2.0",
   "description": "Framework-agnostic FHEVM SDK core library",
   "type": "module",
