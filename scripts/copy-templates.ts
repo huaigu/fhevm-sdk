@@ -79,7 +79,7 @@ async function prepareTemplates() {
       pkg.name = 'frontend'
       pkg.private = true
 
-      // Replace workspace:* with actual versions (will be filled by generator)
+      // Replace workspace:* with template variable (will be replaced by generator)
       if (pkg.dependencies) {
         for (const [dep, version] of Object.entries(pkg.dependencies)) {
           if (version === 'workspace:*') {

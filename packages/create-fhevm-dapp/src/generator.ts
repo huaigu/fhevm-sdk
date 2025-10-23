@@ -151,7 +151,7 @@ function transformContent(content: string, filePath: string, config: GeneratorCo
       .replace(/\{\{DESCRIPTION\}\}/g, `FHEVM ${templateInfo.name} dApp`)
       .replace(/\{\{FHEVM_PACKAGE\}\}/g, templateInfo.packageName)
       .replace(/\{\{FRAMEWORK\}\}/g, templateInfo.name)
-      .replace(/\{\{FHEVM_VERSION\}\}/g, '^0.4.0')
+      .replace(/\{\{FHEVM_VERSION\}\}/g, '^0.2.1')
   }
 
   return content
@@ -181,7 +181,7 @@ async function updateFrontendPackageJson(
       for (const [name, version] of Object.entries(pkg[depType])) {
         if (version === 'workspace:*' || version === '{{FHEVM_VERSION}}') {
           // Use published version
-          pkg[depType][name] = '^0.4.0'
+          pkg[depType][name] = '^0.2.1'
         }
       }
     }
