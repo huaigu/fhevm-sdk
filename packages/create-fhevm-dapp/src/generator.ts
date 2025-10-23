@@ -21,7 +21,11 @@ const EXCLUDE_FILES = [
   'tsconfig.tsbuildinfo',
   'pnpm-lock.yaml',
   'yarn.lock',
-  'package-lock.json'
+  'package-lock.json',
+  'cache',
+  'artifacts',
+  'typechain-types',
+  'deployments'
 ]
 
 export interface GeneratorConfig {
@@ -48,34 +52,65 @@ export async function generateApp(config: GeneratorConfig): Promise<void> {
   // Ensure target directory
   await ensureDir(targetDir)
 
-  const templateDir = path.join(__dirname, '../templates', framework)
+  // Verify templates exist
+  const templatesRoot = path.join(__dirname, '../templates')
+  const baseTemplate = path.join(templatesRoot, 'base')
+  const frontendTemplate = path.join(templatesRoot, 'frontend', framework)
+  const hardhatTemplate = path.join(templatesRoot, 'hardhat')
 
-  // Check if template exists
-  if (!(await pathExists(templateDir))) {
+  if (!(await pathExists(frontendTemplate))) {
     logger.error(`Template for ${framework} not found. Please run 'pnpm copy-templates' first.`)
     process.exit(1)
   }
 
-  // Copy template files
-  const copySpinner = createSpinner('Copying template files...')
-  copySpinner.start()
+  // 1. Copy base template (root files)
+  const baseSpinner = createSpinner('Creating monorepo structure...')
+  baseSpinner.start()
 
-  await copyDirectory(templateDir, targetDir, {
+  await copyDirectory(baseTemplate, targetDir, {
     exclude: EXCLUDE_FILES,
     transform: (content, filePath) => transformContent(content, filePath, config)
   })
 
-  copySpinner.succeed('Template files copied')
+  baseSpinner.succeed('Monorepo structure created')
 
-  // Update package.json
-  const pkgSpinner = createSpinner('Updating package.json...')
+  // 2. Copy frontend template
+  const frontendSpinner = createSpinner(`Copying ${framework} frontend...`)
+  frontendSpinner.start()
+
+  const frontendTargetDir = path.join(targetDir, 'packages', 'frontend')
+  await ensureDir(frontendTargetDir)
+
+  await copyDirectory(frontendTemplate, frontendTargetDir, {
+    exclude: EXCLUDE_FILES,
+    transform: (content, filePath) => transformContent(content, filePath, config)
+  })
+
+  frontendSpinner.succeed(`${framework} frontend copied`)
+
+  // 3. Copy hardhat template
+  const hardhatSpinner = createSpinner('Copying Hardhat contracts...')
+  hardhatSpinner.start()
+
+  const hardhatTargetDir = path.join(targetDir, 'packages', 'hardhat')
+  await ensureDir(hardhatTargetDir)
+
+  await copyDirectory(hardhatTemplate, hardhatTargetDir, {
+    exclude: EXCLUDE_FILES
+  })
+
+  hardhatSpinner.succeed('Hardhat contracts copied')
+
+  // 4. Update package.json files
+  const pkgSpinner = createSpinner('Updating package.json files...')
   pkgSpinner.start()
 
-  await updatePackageJson(targetDir, config)
+  await updateRootPackageJson(targetDir, config)
+  await updateFrontendPackageJson(frontendTargetDir, config)
 
-  pkgSpinner.succeed('package.json updated')
+  pkgSpinner.succeed('package.json files updated')
 
-  // Install dependencies
+  // 5. Install dependencies
   if (installDeps) {
     const installSpinner = createSpinner(`Installing dependencies with ${packageManager}...`)
     installSpinner.start()
@@ -103,6 +138,8 @@ function transformContent(content: string, filePath: string, config: GeneratorCo
   if (
     filePath.endsWith('.json') ||
     filePath.endsWith('.md') ||
+    filePath.endsWith('.yaml') ||
+    filePath.endsWith('.yml') ||
     filePath.endsWith('.ts') ||
     filePath.endsWith('.tsx') ||
     filePath.endsWith('.vue')
@@ -111,26 +148,38 @@ function transformContent(content: string, filePath: string, config: GeneratorCo
       .replace(/\{\{APP_NAME\}\}/g, appName)
       .replace(/\{\{DESCRIPTION\}\}/g, `FHEVM ${templateInfo.name} dApp`)
       .replace(/\{\{FHEVM_PACKAGE\}\}/g, templateInfo.packageName)
+      .replace(/\{\{FRAMEWORK\}\}/g, templateInfo.name)
+      .replace(/\{\{FHEVM_VERSION\}\}/g, '^0.4.0')
   }
 
   return content
 }
 
-async function updatePackageJson(targetDir: string, config: GeneratorConfig): Promise<void> {
+async function updateRootPackageJson(targetDir: string, config: GeneratorConfig): Promise<void> {
   const pkgPath = path.join(targetDir, 'package.json')
   const pkg = await readJson(pkgPath)
 
-  // Update name and description
+  // Name and description already set by template transformation
   pkg.name = config.appName
-  pkg.description = `FHEVM ${config.framework} dApp`
+  pkg.description = `FHEVM ${config.framework} dApp with monorepo structure`
 
-  // Replace workspace:* with actual versions
+  await writeJson(pkgPath, pkg)
+}
+
+async function updateFrontendPackageJson(
+  frontendDir: string,
+  config: GeneratorConfig
+): Promise<void> {
+  const pkgPath = path.join(frontendDir, 'package.json')
+  const pkg = await readJson(pkgPath)
+
+  // Replace workspace:* and {{FHEVM_VERSION}} with actual versions
   for (const depType of ['dependencies', 'devDependencies', 'peerDependencies']) {
     if (pkg[depType]) {
       for (const [name, version] of Object.entries(pkg[depType])) {
-        if (version === 'workspace:*') {
-          // Use latest published version or specific version
-          pkg[depType][name] = '^0.4.0' // Update with actual version
+        if (version === 'workspace:*' || version === '{{FHEVM_VERSION}}') {
+          // Use published version
+          pkg[depType][name] = '^0.4.0'
         }
       }
     }
@@ -153,13 +202,23 @@ function printSuccessMessage(config: GeneratorConfig): void {
   const templateInfo = getTemplateInfo(framework)!
 
   logger.newLine()
-  logger.success(`Created ${appName}!`)
+  logger.success(`🎉 Created ${appName}!`)
+  logger.newLine()
+
+  logger.title('Project Structure (Monorepo):')
+  logger.info(`${appName}/`)
+  logger.info('├── packages/')
+  logger.info(`│   ├── frontend/       # ${templateInfo.name} application`)
+  logger.info('│   └── hardhat/        # Smart contracts')
+  logger.info('├── package.json')
+  logger.info('└── pnpm-workspace.yaml')
   logger.newLine()
 
   logger.title('Your FHEVM dApp includes:')
   logger.info(`📁 Frontend (${templateInfo.name})`)
   logger.info('📝 Smart Contracts (Hardhat + FHEVM)')
   logger.info('🚀 Deploy Scripts')
+  logger.info('🔧 Monorepo Setup (pnpm workspace)')
   logger.newLine()
 
   logger.title('Available commands:')

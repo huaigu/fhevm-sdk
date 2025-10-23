@@ -1,0 +1,19 @@
+{
+  "name": "{{APP_NAME}}",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FHEVM dApp with {{FRAMEWORK}}",
+  "scripts": {
+    "dev": "pnpm --filter frontend dev",
+    "build": "pnpm --filter frontend build",
+    "chain": "pnpm --filter hardhat chain",
+    "compile": "pnpm --filter hardhat compile",
+    "deploy:localhost": "pnpm --filter hardhat deploy:localhost",
+    "deploy:sepolia": "pnpm --filter hardhat deploy:sepolia",
+    "test:contracts": "pnpm --filter hardhat test"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

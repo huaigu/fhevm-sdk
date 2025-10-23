@@ -23,8 +23,8 @@ export function getPackageNameError(name: string): string | null {
   return 'Invalid package name'
 }
 
-export function isValidFramework(framework: string): framework is 'vue' | 'react' {
-  return framework === 'vue' || framework === 'react'
+export function isValidFramework(framework: string): framework is 'vue' | 'react' | 'nextjs' {
+  return framework === 'vue' || framework === 'react' || framework === 'nextjs'
 }
 
 export function isValidPackageManager(pm: string): pm is 'pnpm' | 'npm' | 'yarn' {
