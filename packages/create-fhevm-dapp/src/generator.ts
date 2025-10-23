@@ -151,7 +151,7 @@ function transformContent(content: string, filePath: string, config: GeneratorCo
       .replace(/\{\{DESCRIPTION\}\}/g, `FHEVM ${templateInfo.name} dApp`)
       .replace(/\{\{FHEVM_PACKAGE\}\}/g, templateInfo.packageName)
       .replace(/\{\{FRAMEWORK\}\}/g, templateInfo.name)
-      .replace(/\{\{FHEVM_VERSION\}\}/g, '^0.2.1')
+      .replace(/\{\{FHEVM_VERSION\}\}/g, '^0.2.2')
       .replace(/@fhevm\/(react|vue)/g, templateInfo.packageName) // Replace workspace imports with published package
   }
 
@@ -182,7 +182,7 @@ async function updateFrontendPackageJson(
       for (const [name, version] of Object.entries(pkg[depType])) {
         if (version === 'workspace:*' || version === '{{FHEVM_VERSION}}') {
           // Use published version
-          pkg[depType][name] = '^0.2.1'
+          pkg[depType][name] = '^0.2.2'
         }
       }
     }
