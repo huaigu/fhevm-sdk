@@ -21,14 +21,23 @@ This example demonstrates the complete FHEVM workflow using wagmi-like React hoo
 
 ### Installation
 
-From the repository root:
+From the project root (monorepo):
 
 ```bash
 # Install dependencies
 pnpm install
 
-# Run the example
-pnpm --filter nextjs-example dev
+# Start local FHEVM-ready chain (terminal 1)
+pnpm chain
+
+# Deploy contracts & regenerate ABIs (terminal 2)
+pnpm deploy:localhost
+
+# Launch the Next.js app (terminal 3)
+pnpm dev
+
+# Optional: regenerate ABI map without redeploying
+pnpm generate:abis
 ```
 
 Or from this directory:
@@ -78,7 +87,7 @@ The app will start at [http://localhost:3000](http://localhost:3000)
 ### Project Structure
 
 ```
-examples/nextjs-app/
+packages/frontend/nextjs/
 ├── app/
 │   ├── layout.tsx              # Root layout with providers
 │   ├── page.tsx                # Home page with demo
@@ -97,6 +106,8 @@ examples/nextjs-app/
 ├── tsconfig.json
 └── README.md
 ```
+
+> `contracts/deployedContracts.ts` is updated automatically after each `pnpm deploy:*`. Run `pnpm generate:abis` from the monorepo root if you need to refresh it manually.
 
 ## 🔐 FHEVM Hooks Usage
 
@@ -168,12 +179,12 @@ function DecryptDemo() {
 
 ## 🌐 Deployed Contract
 
-This example connects to a pre-deployed FHECounter contract on Sepolia:
+Out of the box the demo points to the Sepolia FHECounter deployment:
 
 - **Address**: `0x269ea49ac93ae5dd7a98ee0a681a2c0396fbaf8f`
 - **Network**: Sepolia Testnet (Chain ID: 11155111)
 
-The contract has three methods:
+After deploying your own contracts, refresh the ABI map with `pnpm deploy:sepolia` (or `pnpm generate:abis`) and the app will pick up the new address.
 - `getCount()` - Returns encrypted counter value
 - `increment(einput encryptedValue, bytes inputProof)` - Increment counter
 - `decrement(einput encryptedValue, bytes inputProof)` - Decrement counter

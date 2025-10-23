@@ -72,44 +72,33 @@ npx create-fhevm-dapp nextjs my-dapp --force
 
 ## What's Included
 
-Each generated dApp includes:
+Each generated dApp is a pnpm workspace with two packages: a framework-specific frontend and a Hardhat project. Out of the box you get:
 
-### Frontend
-- ✅ Framework-specific setup (Vue/Next.js/React)
-- ✅ FHEVM SDK integration
-- ✅ Example components
-- ✅ TypeScript configuration
-- ✅ Vite or Next.js build setup
-
-### Smart Contracts
-- ✅ FHECounter example contract
-- ✅ Hardhat configuration
-- ✅ Deploy scripts
-- ✅ TypeChain integration
-
-### Development Tools
-- ✅ Local Hardhat node setup
-- ✅ Contract compilation scripts
-- ✅ Deployment scripts (localhost & Sepolia)
-- ✅ Environment configuration
+- ✅ Hooks/composables wired to the `@fhevm/*` SDKs
+- ✅ A Hardhat project with FHECounter contract, deploy scripts, and TypeChain
+- ✅ Tailwind/RainbowKit (React + Next) or Vue UI scaffolding
+- ✅ Local and Sepolia scripts, including automatic ABI generation
 
 ## Project Structure
 
 ```
 my-dapp/
-├── contracts/           # FHEVM smart contracts
-│   └── FHECounter.sol   # Encrypted counter example
-├── deploy/              # Hardhat deploy scripts
-│   └── deploy.ts
-├── hardhat.config.ts    # Hardhat configuration
-├── src/                 # Frontend source
-│   ├── App.vue / App.tsx
-│   ├── components/
-│   └── ...
-├── package.json         # Dependencies & scripts
-├── .env.example         # Environment variables template
-└── README.md
+├── package.json               # Root scripts (pnpm workspace)
+├── pnpm-workspace.yaml
+└── packages/
+    ├── frontend/              # Framework app (Next.js / React / Vue)
+    │   ├── contracts/
+    │   │   └── deployedContracts.ts  # Auto-generated contract map
+    │   ├── components/        # Demo UI + hooks usage
+    │   └── ...                # Framework-specific sources and config
+    └── hardhat/               # Smart contracts workspace
+        ├── contracts/FHECounter.sol
+        ├── deploy/deploy.ts
+        ├── scripts/generateTsAbis.ts
+        └── ...                # Hardhat config, tasks, tests
 ```
+
+> `packages/frontend/**/contracts/deployedContracts.ts` is regenerated automatically after every deploy. Run `pnpm generate:abis` if you need to refresh it manually.
 
 ## Available Scripts
 
@@ -131,8 +120,11 @@ pnpm compile
 # Deploy to local chain
 pnpm deploy:localhost
 
-# Deploy to Sepolia testnet
+# Deploy to Sepolia testnet (updates ABI map on success)
 pnpm deploy:sepolia
+
+# Regenerate contract map without redeploying
+pnpm generate:abis
 ```
 
 ## Get Started
@@ -155,6 +147,7 @@ pnpm chain
 ```bash
 pnpm deploy:localhost
 ```
+This step also refreshes the frontend ABI map. To regenerate manually later run `pnpm generate:abis`.
 
 **Terminal 3: Start Frontend**
 ```bash
@@ -183,7 +176,8 @@ Creating FHEVM dApp...
 # 2. Start development
 $ cd my-encrypted-counter
 $ pnpm chain  # Terminal 1
-$ pnpm deploy:localhost  # Terminal 2
+$ pnpm deploy:localhost  # Terminal 2 (refreshes ABI map)
+$ pnpm generate:abis     # Optional: regenerate ABI map manually
 $ pnpm dev  # Terminal 3
 ```
 

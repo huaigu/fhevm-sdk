@@ -16,8 +16,8 @@ A complete Vue 3 demo showcasing the **@fhevm/vue** SDK for building privacy-pre
 - [Vue 3](https://vuejs.org/) - Progressive JavaScript Framework
 - [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
 - [TypeScript](https://www.typescriptlang.org/) - Type Safety
-- [@fhevm/vue](../../packages/vue/) - Vue 3 SDK for FHEVM
-- [@fhevm/core](../../packages/core/) - Framework-agnostic FHEVM client
+- [@fhevm/vue](https://github.com/0xbojack/fhevm-sdk/tree/main/packages/vue) - Vue 3 SDK for FHEVM
+- [@fhevm/core](https://github.com/0xbojack/fhevm-sdk/tree/main/packages/core) - Framework-agnostic FHEVM client
 - [Ethers.js v6](https://docs.ethers.org/v6/) - Ethereum Library
 
 ## 🚀 Quick Start
@@ -30,17 +30,16 @@ A complete Vue 3 demo showcasing the **@fhevm/vue** SDK for building privacy-pre
 
 ### Installation
 
-From the monorepo root:
+From the generated monorepo root:
 
 ```bash
-# Install dependencies
-pnpm install
+pnpm install            # install all workspace dependencies
+pnpm chain              # terminal 1: start local Hardhat node
+pnpm deploy:localhost   # terminal 2: deploy contracts & refresh ABIs
+pnpm dev                # terminal 3: start the Vue dev server
 
-# Run Vue example
-pnpm example:vue
-
-# Build for production
-pnpm example:vue:build
+# Optional: regenerate ABI map without redeploying
+pnpm generate:abis
 ```
 
 Or from this directory:
@@ -67,7 +66,7 @@ Visit http://localhost:5173
 ## 🔧 Project Structure
 
 ```
-vue-app/
+packages/frontend/vue/
 ├── public/
 │   └── vite.svg              # Vite icon
 ├── src/
@@ -86,6 +85,8 @@ vue-app/
 ├── tsconfig.json             # TypeScript config
 └── package.json              # Dependencies
 ```
+
+> `src/contracts/deployedContracts.ts` is updated automatically after each `pnpm deploy:*`. Run `pnpm generate:abis` from the repository root if you need to refresh it manually.
 
 ## 🎯 FHEVM Composables Usage
 
