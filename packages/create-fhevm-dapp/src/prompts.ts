@@ -1,0 +1,72 @@
+import prompts from 'prompts'
+import { TEMPLATES, getAvailableTemplates } from './templates.js'
+import { isValidPackageName, getPackageNameError } from './validator.js'
+
+export interface PromptAnswers {
+  framework: string
+  appName: string
+  packageManager: string
+  installDeps: boolean
+}
+
+export async function askQuestions(): Promise<PromptAnswers> {
+  const availableFrameworks = getAvailableTemplates()
+
+  const answers = await prompts(
+    [
+      {
+        type: 'select',
+        name: 'framework',
+        message: 'Which framework do you want to use?',
+        choices: Object.entries(TEMPLATES).map(([key, template]) => ({
+          title: template.name,
+          value: key,
+          description: template.description,
+          disabled: !template.available
+        })),
+        initial: 0
+      },
+      {
+        type: 'text',
+        name: 'appName',
+        message: 'What is your project name?',
+        initial: 'my-fhevm-dapp',
+        validate: (value: string) => {
+          if (!value) {
+            return 'Project name is required'
+          }
+          if (!isValidPackageName(value)) {
+            const error = getPackageNameError(value)
+            return error || 'Invalid project name'
+          }
+          return true
+        }
+      },
+      {
+        type: 'select',
+        name: 'packageManager',
+        message: 'Which package manager?',
+        choices: [
+          { title: 'pnpm (recommended)', value: 'pnpm' },
+          { title: 'npm', value: 'npm' },
+          { title: 'yarn', value: 'yarn' }
+        ],
+        initial: 0
+      },
+      {
+        type: 'confirm',
+        name: 'installDeps',
+        message: 'Install dependencies now?',
+        initial: true
+      }
+    ],
+    {
+      onCancel: () => {
+        console.log('\nOperation cancelled')
+        process.exit(0)
+      }
+    }
+  )
+
+  return answers as PromptAnswers
+}

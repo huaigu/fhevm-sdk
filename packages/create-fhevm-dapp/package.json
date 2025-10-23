@@ -1,0 +1,56 @@
+{
+  "name": "create-fhevm-dapp",
+  "version": "0.1.0",
+  "description": "Create FHEVM dApps with framework templates",
+  "type": "module",
+  "bin": {
+    "create-fhevm-dapp": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --clean",
+    "dev": "tsup src/index.ts --format esm --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "copy-templates": "tsx scripts/copy-templates.ts",
+    "prepublishOnly": "pnpm copy-templates && pnpm build"
+  },
+  "keywords": [
+    "fhevm",
+    "zama",
+    "confidential",
+    "dapp",
+    "scaffold",
+    "cli",
+    "vue",
+    "react",
+    "nextjs"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/0xbojack/fhevm-sdk",
+    "directory": "packages/create-fhevm-dapp"
+  },
+  "author": "0xbojack",
+  "license": "BSD-3-Clause-Clear",
+  "dependencies": {
+    "commander": "^12.0.0",
+    "prompts": "^2.4.2",
+    "chalk": "^5.3.0",
+    "ora": "^8.0.1",
+    "fs-extra": "^11.2.0",
+    "validate-npm-package-name": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@types/prompts": "^2.4.9",
+    "@types/fs-extra": "^11.0.4",
+    "typescript": "^5.9.2",
+    "tsup": "^8.5.0",
+    "tsx": "^4.19.2",
+    "vitest": "~2.1.9"
+  }
+}

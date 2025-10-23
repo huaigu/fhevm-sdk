@@ -38,6 +38,9 @@
     "sdk:test:watch": "pnpm --filter ./packages/fhevm-sdk test:watch",
     "sdk:clean": "pnpm --filter ./packages/fhevm-sdk clean",
     "generate": "ts-node ./scripts/generateTsAbis.ts",
+    "copy-templates": "tsx ./scripts/copy-templates.ts",
+    "cli:build": "pnpm --filter create-fhevm-dapp build",
+    "cli:dev": "pnpm --filter create-fhevm-dapp dev",
     "hardhat:chain": "pnpm --filter ./packages/hardhat chain",
     "hardhat:check-types": "pnpm --filter ./packages/hardhat check-types",
     "hardhat:clean": "pnpm --filter ./packages/hardhat clean",
@@ -79,6 +82,7 @@
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
     "tsup": "^8.5.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.9.2",
     "vitest": "~2.1.9"
   },

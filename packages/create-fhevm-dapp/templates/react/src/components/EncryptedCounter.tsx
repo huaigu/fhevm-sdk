@@ -1,18 +1,16 @@
-"use client";
-
-import { useInit, useEncrypt, useDecrypt, useStatus } from "@0xbojack/fhevm-nextjs";
+import { useInit, useEncrypt, useDecrypt, useStatus } from "@0xbojack/fhevm-react";
 import { BrowserProvider } from "ethers";
 import { AlertCircle, CheckCircle2, Info, Loader2, Lock, LockOpen, Radio } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAccount, useWalletClient, useChainId } from "wagmi";
-import { deployedContracts, type SupportedChainId } from "~/contracts/deployedContracts";
-import { Alert, AlertDescription, AlertTitle } from "~/components/ui/alert";
-import { Button } from "~/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
+import { deployedContracts, type SupportedChainId } from "../../contracts/deployedContracts";
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
+import { Button } from "./ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Input } from "./ui/input";
 
 /**
- * EncryptedCounter - Demonstration of @0xbojack/fhevm-nextjs hooks
+ * EncryptedCounter - Demonstration of @0xbojack/fhevm-react hooks
  *
  * This component showcases the complete FHEVM workflow:
  * 1. Initialize FHEVM instance with useInit()
