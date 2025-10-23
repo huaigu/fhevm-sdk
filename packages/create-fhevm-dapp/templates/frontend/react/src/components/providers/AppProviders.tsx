@@ -31,11 +31,13 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Memoize storage config to prevent FhevmProvider re-renders
-  const fhevmConfig = useMemo(() => ({
-    storage: mounted && typeof window !== 'undefined'
-      ? new IndexedDBStorage()
-      : new MemoryStorage(),
-  }), [mounted]);
+  // Only instantiate IndexedDBStorage after component mounts (client-side only)
+  const fhevmConfig = useMemo(() => {
+    if (!mounted || typeof window === 'undefined') {
+      return { storage: new MemoryStorage() };
+    }
+    return { storage: new IndexedDBStorage() };
+  }, [mounted]);
 
   return (
     <WagmiProvider config={wagmiConfig}>
