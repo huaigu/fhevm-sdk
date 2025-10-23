@@ -87,6 +87,7 @@ fhevm-hardhat-template/
 | `npm run coverage` | Generate coverage report |
 | `npm run lint`     | Run linting checks       |
 | `npm run clean`    | Clean build artifacts    |
+| `npm run generate:abis` | Update frontend ABI declarations |
 
 ## 📚 Documentation
 

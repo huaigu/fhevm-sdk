@@ -10,6 +10,7 @@
     "compile": "pnpm --filter hardhat compile",
     "deploy:localhost": "pnpm --filter hardhat deploy:localhost",
     "deploy:sepolia": "pnpm --filter hardhat deploy:sepolia",
+    "generate:abis": "pnpm --filter hardhat run generate:abis",
     "test:contracts": "pnpm --filter hardhat test"
   },
   "engines": {

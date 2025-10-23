@@ -80,8 +80,9 @@
     "build:ts": "tsc --project tsconfig.json",
     "typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain",
     "chain": "hardhat node --network hardhat --no-deploy",
-    "deploy:localhost": "hardhat deploy --network localhost",
-    "deploy:sepolia": "hardhat deploy --network sepolia",
+    "deploy:localhost": "hardhat deploy --network localhost && pnpm run --silent generate:abis",
+    "deploy:sepolia": "hardhat deploy --network sepolia && pnpm run --silent generate:abis",
+    "generate:abis": "ts-node --project tsconfig.json ./scripts/generateTsAbis.ts",
     "verify:sepolia": "hardhat verify --network sepolia"
   },
   "overrides": {

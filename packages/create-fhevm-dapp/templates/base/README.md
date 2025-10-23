@@ -44,6 +44,7 @@ pnpm dev
 - `pnpm compile` - Compile smart contracts
 - `pnpm deploy:localhost` - Deploy to local chain
 - `pnpm deploy:sepolia` - Deploy to Sepolia testnet
+- `pnpm generate:abis` - Regenerate frontend ABI file after deployments
 - `pnpm test:contracts` - Run contract tests
 
 **Frontend specific:**
