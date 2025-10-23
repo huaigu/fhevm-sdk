@@ -152,6 +152,7 @@ function transformContent(content: string, filePath: string, config: GeneratorCo
       .replace(/\{\{FHEVM_PACKAGE\}\}/g, templateInfo.packageName)
       .replace(/\{\{FRAMEWORK\}\}/g, templateInfo.name)
       .replace(/\{\{FHEVM_VERSION\}\}/g, '^0.2.1')
+      .replace(/@fhevm\/(react|vue)/g, templateInfo.packageName) // Replace workspace imports with published package
   }
 
   return content
