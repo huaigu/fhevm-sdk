@@ -25,7 +25,9 @@ const EXCLUDE_FILES = [
   'cache',
   'artifacts',
   'typechain-types',
-  'deployments'
+  'deployments',
+  '.vscode',
+  'fhevmTemp'
 ]
 
 export interface GeneratorConfig {

@@ -30,7 +30,9 @@ const EXCLUDE_PATTERNS = [
   'cache',
   'artifacts',
   'typechain-types',
-  'deployments'
+  'deployments',
+  '.vscode',
+  'fhevmTemp'
 ]
 
 async function prepareTemplates() {
