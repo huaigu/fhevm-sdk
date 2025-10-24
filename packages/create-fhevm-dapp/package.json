@@ -15,7 +15,7 @@
     "dev": "tsup src/index.ts --format esm --watch",
     "test": "vitest run",
     "test:watch": "vitest",
-    "copy-templates": "tsx scripts/copy-templates.ts",
+    "copy-templates": "node ../../scripts/copy-templates.mjs",
     "prepublishOnly": "pnpm copy-templates && pnpm build"
   },
   "keywords": [
