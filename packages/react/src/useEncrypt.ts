@@ -38,7 +38,7 @@ export interface UseEncryptReturn {
  *
  * @example
  * ```tsx
- * import { useEncrypt } from '@fhevm/react';
+ * import { useEncrypt } from '@0xbojack/fhevm-react';
  *
  * function MyComponent() {
  *   const { encrypt, data, isLoading, error } = useEncrypt();

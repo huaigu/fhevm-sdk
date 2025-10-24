@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue';
-import type { DecryptRequest, DecryptResult } from '@fhevm/core';
+import type { DecryptRequest, DecryptResult } from '@0xbojack/fhevm-core';
 import type { JsonRpcSigner } from 'ethers';
 import { useFhevmClient } from './plugin';
 
@@ -43,7 +43,7 @@ export interface UseDecryptReturn {
  * @example
  * ```vue
  * <script setup>
- * import { useDecrypt } from '@fhevm/vue';
+ * import { useDecrypt } from '@0xbojack/fhevm-vue';
  * import { BrowserProvider } from 'ethers';
  *
  * const { decrypt, data, isLoading, error } = useDecrypt();

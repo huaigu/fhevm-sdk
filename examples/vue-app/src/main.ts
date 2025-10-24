@@ -1,6 +1,6 @@
 import { createApp } from 'vue'
-import { createFhevm } from '@fhevm/vue'
-import { IndexedDBStorage } from '@fhevm/core'
+import { createFhevm } from '@0xbojack/fhevm-vue'
+import { IndexedDBStorage } from '@0xbojack/fhevm-core'
 import './style.css'
 import App from './App.vue'
 

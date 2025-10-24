@@ -10,7 +10,7 @@ export default function Home() {
             🔐 FHEVM SDK Example
           </h1>
           <p className="text-xl text-base-content/70 mb-2">
-            Built with <code className="badge badge-primary badge-lg">@fhevm/react</code>
+            Built with <code className="badge badge-primary badge-lg">@0xbojack/fhevm-nextjs</code>
           </p>
           <p className="text-lg text-base-content/60">
             Wagmi-like hooks for Fully Homomorphic Encryption on Ethereum

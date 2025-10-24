@@ -1,5 +1,5 @@
 import { ref, computed, onUnmounted, type Ref } from 'vue';
-import type { FhevmStatus } from '@fhevm/core';
+import type { FhevmStatus } from '@0xbojack/fhevm-core';
 import { useFhevmClient } from './plugin';
 
 /**
@@ -39,7 +39,7 @@ export interface UseStatusReturn {
  * @example
  * ```vue
  * <script setup>
- * import { useStatus } from '@fhevm/vue';
+ * import { useStatus } from '@0xbojack/fhevm-vue';
  *
  * const { status, isReady, isLoading, isError } = useStatus();
  * </script>

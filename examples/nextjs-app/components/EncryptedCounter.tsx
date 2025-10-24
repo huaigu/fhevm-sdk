@@ -234,7 +234,7 @@ export function EncryptedCounter() {
           Encrypted Counter Demo
         </CardTitle>
         <CardDescription>
-          Demonstration of @fhevm/react hooks for Fully Homomorphic Encryption
+          Demonstration of @0xbojack/fhevm-nextjs hooks for Fully Homomorphic Encryption
         </CardDescription>
       </CardHeader>
 

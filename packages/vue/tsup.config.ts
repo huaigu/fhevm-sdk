@@ -15,6 +15,6 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
   minify: false,
-  external: ['vue', '@fhevm/core', 'ethers'],
+  external: ['vue', '@0xbojack/fhevm-core', 'ethers'],
   tsconfig: './tsconfig.json',
 });

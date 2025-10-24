@@ -1,4 +1,4 @@
-# @fhevm/react
+# @0xbojack/fhevm-react
 
 React hooks and components for FHEVM SDK - Build privacy-preserving dApps with Fully Homomorphic Encryption.
 
@@ -9,16 +9,16 @@ React hooks and components for FHEVM SDK - Build privacy-preserving dApps with F
 - 🔄 **Auto-cancellation**: Automatic cleanup on component unmount
 - 📊 **Status Tracking**: Built-in loading and error states
 - 🎯 **TypeScript**: Full type safety and IntelliSense support
-- ⚡ **Framework-Agnostic Core**: Built on @fhevm/core
+- ⚡ **Framework-Agnostic Core**: Built on @0xbojack/fhevm-core
 
 ## Installation
 
 ```bash
-npm install @fhevm/react @fhevm/core ethers
+npm install @0xbojack/fhevm-react @0xbojack/fhevm-core ethers
 # or
-pnpm add @fhevm/react @fhevm/core ethers
+pnpm add @0xbojack/fhevm-react @0xbojack/fhevm-core ethers
 # or
-yarn add @fhevm/react @fhevm/core ethers
+yarn add @0xbojack/fhevm-react @0xbojack/fhevm-core ethers
 ```
 
 ## Quick Start
@@ -28,7 +28,7 @@ yarn add @fhevm/react @fhevm/core ethers
 Wrap your app with `FhevmProvider`:
 
 ```tsx
-import { FhevmProvider, IndexedDBStorage } from '@fhevm/react';
+import { FhevmProvider, IndexedDBStorage } from '@0xbojack/fhevm-react';
 
 function App() {
   return (
@@ -42,7 +42,7 @@ function App() {
 ### 2. Initialize FHEVM
 
 ```tsx
-import { useInit } from '@fhevm/react';
+import { useInit } from '@0xbojack/fhevm-react';
 import { BrowserProvider } from 'ethers';
 import { useEffect } from 'react';
 
@@ -68,7 +68,7 @@ function InitializeButton() {
 ### 3. Encrypt Data
 
 ```tsx
-import { useEncrypt, useStatus } from '@fhevm/react';
+import { useEncrypt, useStatus } from '@0xbojack/fhevm-react';
 
 function EncryptComponent() {
   const { encrypt, data, isLoading, error } = useEncrypt();
@@ -105,7 +105,7 @@ function EncryptComponent() {
 ### 4. Decrypt Data
 
 ```tsx
-import { useDecrypt } from '@fhevm/react';
+import { useDecrypt } from '@0xbojack/fhevm-react';
 import { BrowserProvider } from 'ethers';
 
 function DecryptComponent() {
@@ -306,7 +306,7 @@ import {
   useDecrypt,
   useStatus,
   IndexedDBStorage,
-} from '@fhevm/react';
+} from '@0xbojack/fhevm-react';
 import { BrowserProvider } from 'ethers';
 import { useEffect } from 'react';
 
@@ -403,7 +403,7 @@ import type {
   EncryptResult,
   DecryptRequest,
   DecryptResult,
-} from '@fhevm/react';
+} from '@0xbojack/fhevm-react';
 ```
 
 ## License
@@ -413,6 +413,6 @@ BSD-3-Clause-Clear
 ## Links
 
 - [FHEVM Documentation](https://docs.zama.ai/fhevm)
-- [@fhevm/core](../core)
+- [@0xbojack/fhevm-core](../core)
 - [GitHub Repository](https://github.com/zama-ai/fhevm-sdk)
 - [Zama](https://zama.ai)

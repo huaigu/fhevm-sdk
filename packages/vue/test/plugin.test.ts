@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { createApp } from 'vue';
 import { createFhevm, useFhevmClient } from '../src/plugin';
-import { MemoryStorage } from '@fhevm/core';
+import { MemoryStorage } from '@0xbojack/fhevm-core';
 
 describe('createFhevm', () => {
   it('should create plugin with default config', () => {

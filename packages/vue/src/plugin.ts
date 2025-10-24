@@ -1,5 +1,5 @@
 import { inject, provide, type App, type InjectionKey } from 'vue';
-import { FhevmClient, type FhevmConfig } from '@fhevm/core';
+import { FhevmClient, type FhevmConfig } from '@0xbojack/fhevm-core';
 
 /**
  * Injection key for FHEVM client
@@ -20,8 +20,8 @@ export interface FhevmPluginOptions {
  * @example
  * ```ts
  * import { createApp } from 'vue';
- * import { createFhevm } from '@fhevm/vue';
- * import { IndexedDBStorage } from '@fhevm/core';
+ * import { createFhevm } from '@0xbojack/fhevm-vue';
+ * import { IndexedDBStorage } from '@0xbojack/fhevm-core';
  *
  * const app = createApp(App);
  * const fhevm = createFhevm({

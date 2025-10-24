@@ -39,7 +39,7 @@ export interface UseInitReturn {
  *
  * @example
  * ```tsx
- * import { useInit } from '@fhevm/react';
+ * import { useInit } from '@0xbojack/fhevm-react';
  * import { BrowserProvider } from 'ethers';
  *
  * function MyComponent() {

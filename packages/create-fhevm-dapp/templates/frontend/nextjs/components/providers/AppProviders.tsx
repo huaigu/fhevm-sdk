@@ -1,6 +1,6 @@
 "use client";
 
-import { FhevmProvider, IndexedDBStorage, MemoryStorage } from "@fhevm/react";
+import { FhevmProvider, IndexedDBStorage, MemoryStorage } from "@0xbojack/fhevm-nextjs";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, useEffect, useMemo } from "react";

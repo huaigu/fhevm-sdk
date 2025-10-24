@@ -20,9 +20,9 @@
     "composite": true,
     "incremental": true,
     "paths": {
-      "@fhevm/core": ["./packages/core/src"],
-      "@fhevm/react": ["./packages/react/src"],
-      "@fhevm/vue": ["./packages/vue/src"],
+      "@0xbojack/fhevm-core": ["./packages/core/src"],
+      "@0xbojack/fhevm-react": ["./packages/react/src"],
+      "@0xbojack/fhevm-vue": ["./packages/vue/src"],
       "fhevm-sdk": ["./packages/fhevm-sdk/src"]
     }
   },

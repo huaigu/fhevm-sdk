@@ -15,6 +15,6 @@ export default defineConfig({
   splitting: false,
   treeshake: true,
   minify: false,
-  external: ['react', 'react-dom', '@fhevm/core', 'ethers'],
+  external: ['react', 'react-dom', '@0xbojack/fhevm-core', 'ethers'],
   tsconfig: './tsconfig.json',
 });

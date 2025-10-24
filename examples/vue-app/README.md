@@ -1,6 +1,6 @@
 # FHEVM SDK - Vue 3 Example
 
-A complete Vue 3 demo showcasing the **@fhevm/vue** SDK for building privacy-preserving dApps with Fully Homomorphic Encryption (FHE).
+A complete Vue 3 demo showcasing the **@0xbojack/fhevm-vue** SDK for building privacy-preserving dApps with Fully Homomorphic Encryption (FHE).
 
 ## 🌟 Features
 
@@ -16,8 +16,8 @@ A complete Vue 3 demo showcasing the **@fhevm/vue** SDK for building privacy-pre
 - [Vue 3](https://vuejs.org/) - Progressive JavaScript Framework
 - [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
 - [TypeScript](https://www.typescriptlang.org/) - Type Safety
-- [@fhevm/vue](../../packages/vue/) - Vue 3 SDK for FHEVM
-- [@fhevm/core](../../packages/core/) - Framework-agnostic FHEVM client
+- [@0xbojack/fhevm-vue](../../packages/vue/) - Vue 3 SDK for FHEVM
+- [@0xbojack/fhevm-core](../../packages/core/) - Framework-agnostic FHEVM client
 - [Ethers.js v6](https://docs.ethers.org/v6/) - Ethereum Library
 
 ## 🚀 Quick Start
@@ -93,8 +93,8 @@ vue-app/
 
 ```typescript
 import { createApp } from 'vue'
-import { createFhevm } from '@fhevm/vue'
-import { IndexedDBStorage } from '@fhevm/core'
+import { createFhevm } from '@0xbojack/fhevm-vue'
+import { IndexedDBStorage } from '@0xbojack/fhevm-core'
 
 const app = createApp(App)
 
@@ -110,7 +110,7 @@ app.use(fhevm)
 ### 2. Initialize SDK
 
 ```typescript
-import { useInit, useStatus } from '@fhevm/vue'
+import { useInit, useStatus } from '@0xbojack/fhevm-vue'
 
 const { init } = useInit()
 const { isReady, isLoading } = useStatus()
@@ -122,7 +122,7 @@ await init({ provider: window.ethereum })
 ### 3. Encrypt Data
 
 ```typescript
-import { useEncrypt } from '@fhevm/vue'
+import { useEncrypt } from '@0xbojack/fhevm-vue'
 
 const { encrypt, data, isLoading } = useEncrypt()
 
@@ -138,7 +138,7 @@ const encrypted = await encrypt({
 ### 4. Decrypt Contract Data
 
 ```typescript
-import { useDecrypt } from '@fhevm/vue'
+import { useDecrypt } from '@0xbojack/fhevm-vue'
 
 const { decrypt, data, isLoading } = useDecrypt()
 

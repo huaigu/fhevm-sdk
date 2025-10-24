@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useWallet } from '@/composables/useWallet';
-import { useInit, useStatus, useEncrypt, useDecrypt } from '@fhevm/vue';
+import { useInit, useStatus, useEncrypt, useDecrypt } from '@0xbojack/fhevm-vue';
 import { BrowserProvider, Contract } from 'ethers';
 import { deployedContracts, type SupportedChainId } from '@/contracts/deployedContracts';
 
@@ -220,7 +220,7 @@ const pollDecryptionResult = async (requestId: string, contractInstance: any) =>
     <div class="card">
       <h2>🔐 Encrypted Counter Demo</h2>
       <p class="description">
-        Demonstration of @fhevm/vue composables for Fully Homomorphic Encryption
+        Demonstration of @0xbojack/fhevm-vue composables for Fully Homomorphic Encryption
       </p>
 
       <!-- Connection Warning -->

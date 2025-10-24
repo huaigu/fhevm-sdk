@@ -1,6 +1,6 @@
 import { ref, onUnmounted, computed, type Ref } from 'vue';
-import type { InitParams, FhevmInstance, FhevmStatus } from '@fhevm/core';
-import { FhevmAbortError } from '@fhevm/core';
+import type { InitParams, FhevmInstance, FhevmStatus } from '@0xbojack/fhevm-core';
+import { FhevmAbortError } from '@0xbojack/fhevm-core';
 import { useFhevmClient } from './plugin';
 
 /**
@@ -48,7 +48,7 @@ export interface UseInitReturn {
  * @example
  * ```vue
  * <script setup>
- * import { useInit } from '@fhevm/vue';
+ * import { useInit } from '@0xbojack/fhevm-vue';
  * import { BrowserProvider } from 'ethers';
  * import { onMounted } from 'vue';
  *

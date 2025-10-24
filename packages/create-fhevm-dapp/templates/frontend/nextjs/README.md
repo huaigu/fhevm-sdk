@@ -1,6 +1,6 @@
 # FHEVM SDK - Next.js Example
 
-A minimal Next.js application demonstrating how to use the `@fhevm/react` SDK for Fully Homomorphic Encryption on Ethereum.
+A minimal Next.js application demonstrating how to use the `@0xbojack/fhevm-nextjs` SDK for Fully Homomorphic Encryption on Ethereum.
 
 ## 🎯 What This Example Shows
 
@@ -77,8 +77,8 @@ The app will start at [http://localhost:3000](http://localhost:3000)
 
 ### Dependencies
 
-- `@fhevm/core` - Framework-agnostic FHEVM SDK core
-- `@fhevm/react` - React hooks for FHEVM (useInit, useEncrypt, useDecrypt, useStatus)
+- `@0xbojack/fhevm-core` - Framework-agnostic FHEVM SDK core
+- `@0xbojack/fhevm-nextjs` - React hooks for FHEVM (useInit, useEncrypt, useDecrypt, useStatus)
 - `wagmi` - Ethereum React hooks
 - `@rainbow-me/rainbowkit` - Wallet connection UI
 - `next` - Next.js 15 framework
@@ -114,7 +114,7 @@ packages/frontend/nextjs/
 ### 1. Initialize FHEVM
 
 ```tsx
-import { useInit, useStatus } from "@fhevm/react";
+import { useInit, useStatus } from "@0xbojack/fhevm-nextjs";
 
 function App() {
   const { init, status, error } = useInit();
@@ -133,7 +133,7 @@ function App() {
 ### 2. Encrypt Data
 
 ```tsx
-import { useEncrypt } from "@fhevm/react";
+import { useEncrypt } from "@0xbojack/fhevm-nextjs";
 
 function EncryptDemo() {
   const { encrypt, data, isLoading, error } = useEncrypt();
@@ -158,7 +158,7 @@ function EncryptDemo() {
 ### 3. Decrypt Data
 
 ```tsx
-import { useDecrypt } from "@fhevm/react";
+import { useDecrypt } from "@0xbojack/fhevm-nextjs";
 
 function DecryptDemo() {
   const { decrypt, data, isLoading, error } = useDecrypt();
@@ -228,8 +228,8 @@ The build will automatically use the correct workspace dependencies.
 
 - [FHEVM Documentation](https://docs.zama.ai/fhevm)
 - [Zama](https://www.zama.ai/)
-- [@fhevm/react Package](../../packages/react/README.md)
-- [@fhevm/core Package](../../packages/core/README.md)
+- [@0xbojack/fhevm-nextjs Package](../../packages/react/README.md)
+- [@0xbojack/fhevm-core Package](../../packages/core/README.md)
 
 ## 🤝 Contributing
 

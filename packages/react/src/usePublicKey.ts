@@ -22,7 +22,7 @@ export interface UsePublicKeyReturn {
  *
  * @example
  * ```tsx
- * import { usePublicKey } from '@fhevm/react';
+ * import { usePublicKey } from '@0xbojack/fhevm-react';
  *
  * function MyComponent() {
  *   const { publicKey, error } = usePublicKey();

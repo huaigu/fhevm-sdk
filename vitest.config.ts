@@ -30,9 +30,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@fhevm/core': path.resolve(__dirname, './packages/core/src'),
-      '@fhevm/react': path.resolve(__dirname, './packages/react/src'),
-      '@fhevm/vue': path.resolve(__dirname, './packages/vue/src'),
+      '@0xbojack/fhevm-core': path.resolve(__dirname, './packages/core/src'),
+      '@0xbojack/fhevm-react': path.resolve(__dirname, './packages/react/src'),
+      '@0xbojack/fhevm-vue': path.resolve(__dirname, './packages/vue/src'),
       'fhevm-sdk': path.resolve(__dirname, './packages/fhevm-sdk/src'),
     },
   },

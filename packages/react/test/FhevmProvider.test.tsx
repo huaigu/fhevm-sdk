@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { render } from '@testing-library/react';
 import { FhevmProvider, useFhevmContext } from '../src/FhevmContext';
-import { MemoryStorage } from '@fhevm/core';
+import { MemoryStorage } from '@0xbojack/fhevm-core';
 
 describe('FhevmProvider', () => {
   it('should provide context to children', () => {

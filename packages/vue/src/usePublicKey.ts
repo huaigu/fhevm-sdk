@@ -23,7 +23,7 @@ export interface UsePublicKeyReturn {
  * @example
  * ```vue
  * <script setup>
- * import { usePublicKey } from '@fhevm/vue';
+ * import { usePublicKey } from '@0xbojack/fhevm-vue';
  *
  * const { publicKey, error } = usePublicKey();
  * </script>

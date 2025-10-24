@@ -1,4 +1,4 @@
-# @fhevm/vue
+# @0xbojack/fhevm-vue
 
 Vue 3 composables for FHEVM SDK - Build privacy-preserving dApps with Fully Homomorphic Encryption.
 
@@ -9,16 +9,16 @@ Vue 3 composables for FHEVM SDK - Build privacy-preserving dApps with Fully Homo
 - 🔄 **Auto-cleanup**: Automatic resource cleanup on unmount
 - 📊 **Reactive State**: Built-in reactive loading and error states
 - 🎯 **TypeScript**: Full type safety and IntelliSense support
-- ⚡ **Framework-Agnostic Core**: Built on @fhevm/core
+- ⚡ **Framework-Agnostic Core**: Built on @0xbojack/fhevm-core
 
 ## Installation
 
 ```bash
-npm install @fhevm/vue @fhevm/core ethers
+npm install @0xbojack/fhevm-vue @0xbojack/fhevm-core ethers
 # or
-pnpm add @fhevm/vue @fhevm/core ethers
+pnpm add @0xbojack/fhevm-vue @0xbojack/fhevm-core ethers
 # or
-yarn add @fhevm/vue @fhevm/core ethers
+yarn add @0xbojack/fhevm-vue @0xbojack/fhevm-core ethers
 ```
 
 ## Quick Start
@@ -30,7 +30,7 @@ Install the FHEVM plugin in your Vue app:
 ```ts
 // main.ts
 import { createApp } from 'vue';
-import { createFhevm, IndexedDBStorage } from '@fhevm/vue';
+import { createFhevm, IndexedDBStorage } from '@0xbojack/fhevm-vue';
 import App from './App.vue';
 
 const app = createApp(App);
@@ -47,7 +47,7 @@ app.mount('#app');
 
 ```vue
 <script setup lang="ts">
-import { useInit } from '@fhevm/vue';
+import { useInit } from '@0xbojack/fhevm-vue';
 import { BrowserProvider } from 'ethers';
 import { onMounted } from 'vue';
 
@@ -71,7 +71,7 @@ onMounted(async () => {
 
 ```vue
 <script setup lang="ts">
-import { useEncrypt, useStatus } from '@fhevm/vue';
+import { useEncrypt, useStatus } from '@0xbojack/fhevm-vue';
 
 const { encrypt, data, isLoading, error } = useEncrypt();
 const { isReady } = useStatus();
@@ -102,7 +102,7 @@ const handleEncrypt = async () => {
 
 ```vue
 <script setup lang="ts">
-import { useDecrypt } from '@fhevm/vue';
+import { useDecrypt } from '@0xbojack/fhevm-vue';
 import { BrowserProvider } from 'ethers';
 
 const { decrypt, data, isLoading, error } = useDecrypt();
@@ -142,7 +142,7 @@ Create the FHEVM Vue plugin.
 
 **Example:**
 ```ts
-import { createFhevm, IndexedDBStorage } from '@fhevm/vue';
+import { createFhevm, IndexedDBStorage } from '@0xbojack/fhevm-vue';
 
 const fhevm = createFhevm({
   config: { storage: new IndexedDBStorage() }
@@ -298,7 +298,7 @@ Access the FHEVM client directly.
 **Example:**
 ```vue
 <script setup>
-import { useFhevmClient } from '@fhevm/vue';
+import { useFhevmClient } from '@0xbojack/fhevm-vue';
 
 const client = useFhevmClient();
 
@@ -312,7 +312,7 @@ const instance = client.getInstance();
 ```vue
 <!-- App.vue -->
 <script setup lang="ts">
-import { useInit, useEncrypt, useDecrypt, useStatus } from '@fhevm/vue';
+import { useInit, useEncrypt, useDecrypt, useStatus } from '@0xbojack/fhevm-vue';
 import { BrowserProvider } from 'ethers';
 import { onMounted } from 'vue';
 
@@ -380,7 +380,7 @@ const handleDecrypt = async () => {
 ```ts
 // main.ts
 import { createApp } from 'vue';
-import { createFhevm, IndexedDBStorage } from '@fhevm/vue';
+import { createFhevm, IndexedDBStorage } from '@0xbojack/fhevm-vue';
 import App from './App.vue';
 
 const app = createApp(App);
@@ -406,7 +406,7 @@ import type {
   EncryptResult,
   DecryptRequest,
   DecryptResult,
-} from '@fhevm/vue';
+} from '@0xbojack/fhevm-vue';
 ```
 
 ## Composition API Only
@@ -420,7 +420,7 @@ BSD-3-Clause-Clear
 ## Links
 
 - [FHEVM Documentation](https://docs.zama.ai/fhevm)
-- [@fhevm/core](../core)
-- [@fhevm/react](../react)
+- [@0xbojack/fhevm-core](../core)
+- [@0xbojack/fhevm-react](../react)
 - [GitHub Repository](https://github.com/zama-ai/fhevm-sdk)
 - [Zama](https://zama.ai)

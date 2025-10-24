@@ -2,7 +2,7 @@
   "name": "nextjs-example",
   "version": "0.1.0",
   "private": true,
-  "description": "Next.js example demonstrating @fhevm/react SDK",
+  "description": "Next.js example demonstrating @0xbojack/fhevm-nextjs SDK",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

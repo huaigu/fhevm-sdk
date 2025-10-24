@@ -28,7 +28,7 @@ export interface FhevmProviderProps {
  *
  * @example
  * ```tsx
- * import { FhevmProvider } from '@fhevm/react';
+ * import { FhevmProvider } from '@0xbojack/fhevm-react';
  * import { IndexedDBStorage } from '@0xbojack/fhevm-core';
  *
  * function App() {

@@ -37,7 +37,7 @@ export interface UseStatusReturn {
  *
  * @example
  * ```tsx
- * import { useStatus } from '@fhevm/react';
+ * import { useStatus } from '@0xbojack/fhevm-react';
  *
  * function MyComponent() {
  *   const { status, isReady, isLoading, isError } = useStatus();

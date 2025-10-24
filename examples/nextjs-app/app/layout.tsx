@@ -5,7 +5,7 @@ import { AppProviders } from "~/components/providers/AppProviders";
 
 export const metadata: Metadata = {
   title: "FHEVM SDK Example - Next.js",
-  description: "Demonstration of @fhevm/react hooks for Fully Homomorphic Encryption",
+  description: "Demonstration of @0xbojack/fhevm-nextjs hooks for Fully Homomorphic Encryption",
 };
 
 export default function RootLayout({

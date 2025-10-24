@@ -232,7 +232,7 @@ export function EncryptedCounter() {
           Encrypted Counter Demo
         </CardTitle>
         <CardDescription>
-          Demonstration of @fhevm/react hooks for Fully Homomorphic Encryption
+          Demonstration of @0xbojack/fhevm-react hooks for Fully Homomorphic Encryption
         </CardDescription>
       </CardHeader>
 
@@ -527,7 +527,7 @@ export function EncryptedCounter() {
         <div className="space-y-4 rounded-lg border border-border bg-muted/50 p-6">
           <h3 className="text-lg font-semibold">About This Demo</h3>
           <p className="text-sm text-muted-foreground">
-            This demo showcases the complete FHEVM workflow using <code className="text-primary">@0xbojack/fhevm-nextjs</code> hooks:
+            This demo showcases the complete FHEVM workflow using <code className="text-primary">@0xbojack/fhevm-react</code> hooks:
           </p>
           <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground ml-2">
             <li>

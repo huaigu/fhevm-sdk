@@ -1,5 +1,5 @@
 import { ref, type Ref } from 'vue';
-import type { EncryptParams, EncryptResult } from '@fhevm/core';
+import type { EncryptParams, EncryptResult } from '@0xbojack/fhevm-core';
 import { useFhevmClient } from './plugin';
 
 /**
@@ -39,7 +39,7 @@ export interface UseEncryptReturn {
  * @example
  * ```vue
  * <script setup>
- * import { useEncrypt } from '@fhevm/vue';
+ * import { useEncrypt } from '@0xbojack/fhevm-vue';
  *
  * const { encrypt, data, isLoading, error } = useEncrypt();
  *

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Vue 3 example demonstrating @fhevm/vue SDK",
+  "description": "Vue 3 example demonstrating @0xbojack/fhevm-vue SDK",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc && vite build",

@@ -42,7 +42,7 @@ export interface UseDecryptReturn {
  *
  * @example
  * ```tsx
- * import { useDecrypt } from '@fhevm/react';
+ * import { useDecrypt } from '@0xbojack/fhevm-react';
  * import { BrowserProvider } from 'ethers';
  *
  * function MyComponent() {
