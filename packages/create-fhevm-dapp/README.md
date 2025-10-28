@@ -5,7 +5,7 @@ Scaffold FHEVM dApps with your favorite framework in seconds.
 ## Quick Start
 
 ```bash
-npx create-fhevm-dapp
+npx @0xbojack/create-fhevm-dapp
 ```
 
 ## Usage
@@ -13,7 +13,7 @@ npx create-fhevm-dapp
 ### Interactive Mode
 
 ```bash
-npx create-fhevm-dapp
+npx @0xbojack/create-fhevm-dapp
 ```
 
 The CLI will guide you through:
@@ -25,29 +25,29 @@ The CLI will guide you through:
 ### Command Line Mode
 
 ```bash
-npx create-fhevm-dapp [framework] [name] [options]
+npx @0xbojack/create-fhevm-dapp [framework] [name] [options]
 ```
 
 **Examples:**
 
 ```bash
 # Create a Vue app
-npx create-fhevm-dapp vue my-dapp
+npx @0xbojack/create-fhevm-dapp vue my-dapp
 
 # Create a Next.js app
-npx create-fhevm-dapp nextjs my-dapp
+npx @0xbojack/create-fhevm-dapp nextjs my-dapp
 
 # Create a React app
-npx create-fhevm-dapp react my-dapp
+npx @0xbojack/create-fhevm-dapp react my-dapp
 
 # Skip dependency installation
-npx create-fhevm-dapp vue my-dapp --skip-install
+npx @0xbojack/create-fhevm-dapp vue my-dapp --skip-install
 
 # Use specific package manager
-npx create-fhevm-dapp nextjs my-dapp --package-manager npm
+npx @0xbojack/create-fhevm-dapp nextjs my-dapp --package-manager npm
 
 # Force overwrite existing directory
-npx create-fhevm-dapp nextjs my-dapp --force
+npx @0xbojack/create-fhevm-dapp nextjs my-dapp --force
 ```
 
 ## Options
@@ -132,7 +132,7 @@ pnpm generate:abis
 ### 1. Generate Your dApp
 
 ```bash
-npx create-fhevm-dapp vue my-dapp
+npx @0xbojack/create-fhevm-dapp vue my-dapp
 cd my-dapp
 ```
 
