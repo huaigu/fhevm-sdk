@@ -160,7 +160,7 @@ Your dApp is now running at `http://localhost:5173`!
 
 ```bash
 # 1. Create dApp
-$ npx create-fhevm-dapp vue my-encrypted-counter
+$ npx @0xbojack/create-fhevm-dapp vue my-encrypted-counter
 ✔ Framework · Vue
 ✔ App name · my-encrypted-counter
 ✔ Package manager · pnpm
