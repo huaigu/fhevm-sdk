@@ -12,6 +12,29 @@ import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
+const PACKAGE_MANAGERS = ['pnpm', 'npm', 'yarn'] as const
+type PackageManager = (typeof PACKAGE_MANAGERS)[number]
+
+function isSupportedPackageManager(value: string): value is PackageManager {
+  return (PACKAGE_MANAGERS as readonly string[]).includes(value)
+}
+
+function inferPackageManager(): PackageManager {
+  const userAgent = process.env.npm_config_user_agent || ''
+
+  if (userAgent.includes('pnpm')) {
+    return 'pnpm'
+  }
+  if (userAgent.includes('yarn')) {
+    return 'yarn'
+  }
+  if (userAgent.includes('npm')) {
+    return 'npm'
+  }
+
+  return 'pnpm'
+}
+
 export async function run() {
   const packageJson = JSON.parse(
     readFileSync(path.join(__dirname, '../package.json'), 'utf-8')
@@ -76,7 +99,17 @@ async function createApp(
 
   // Get package manager
   if (options?.packageManager) {
+    if (!isSupportedPackageManager(options.packageManager)) {
+      logger.error(
+        `Invalid package manager: ${options.packageManager}. Available: ${PACKAGE_MANAGERS.join(', ')}`
+      )
+      process.exit(1)
+    }
     config.packageManager = options.packageManager
+  }
+
+  if (!config.packageManager) {
+    config.packageManager = inferPackageManager()
   }
 
   // If missing required fields, ask via prompts
