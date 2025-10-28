@@ -2,6 +2,8 @@
 
 Scaffold FHEVM dApps with your favorite framework in seconds.
 
+![CLI demo showing non-interactive project creation](./assets/create-fhevm-dapp.gif)
+
 ## Quick Start
 
 ```bash
