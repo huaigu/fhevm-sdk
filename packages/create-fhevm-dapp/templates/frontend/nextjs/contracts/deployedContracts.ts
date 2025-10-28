@@ -1,7 +1,7 @@
 /**
  * Deployed contract addresses and ABIs
  *
- * Run `pnpm generate:abis` after deploying contracts to refresh this file.
+ * This file contains the addresses of deployed FHECounter contracts on different networks.
  * For the showcase demo, we use the contract deployed on Sepolia testnet.
  */
 

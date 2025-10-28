@@ -1,5 +1,5 @@
 {
-  "name": "create-fhevm-dapp",
+  "name": "@0xbojack/create-fhevm-dapp",
   "version": "0.1.0",
   "description": "Create FHEVM dApps with framework templates",
   "type": "module",

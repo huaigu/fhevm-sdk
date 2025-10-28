@@ -16,8 +16,8 @@ A complete Vue 3 demo showcasing the **@0xbojack/fhevm-vue** SDK for building pr
 - [Vue 3](https://vuejs.org/) - Progressive JavaScript Framework
 - [Vite](https://vitejs.dev/) - Next Generation Frontend Tooling
 - [TypeScript](https://www.typescriptlang.org/) - Type Safety
-- [@0xbojack/fhevm-vue](https://github.com/0xbojack/fhevm-sdk/tree/main/packages/vue) - Vue 3 SDK for FHEVM
-- [@0xbojack/fhevm-core](https://github.com/0xbojack/fhevm-sdk/tree/main/packages/core) - Framework-agnostic FHEVM client
+- [@0xbojack/fhevm-vue](../../packages/vue/) - Vue 3 SDK for FHEVM
+- [@0xbojack/fhevm-core](../../packages/core/) - Framework-agnostic FHEVM client
 - [Ethers.js v6](https://docs.ethers.org/v6/) - Ethereum Library
 
 ## 🚀 Quick Start
@@ -30,16 +30,17 @@ A complete Vue 3 demo showcasing the **@0xbojack/fhevm-vue** SDK for building pr
 
 ### Installation
 
-From the generated monorepo root:
+From the monorepo root:
 
 ```bash
-pnpm install            # install all workspace dependencies
-pnpm chain              # terminal 1: start local Hardhat node
-pnpm deploy:localhost   # terminal 2: deploy contracts & refresh ABIs
-pnpm dev                # terminal 3: start the Vue dev server
+# Install dependencies
+pnpm install
 
-# Optional: regenerate ABI map without redeploying
-pnpm generate:abis
+# Run Vue example
+pnpm example:vue
+
+# Build for production
+pnpm example:vue:build
 ```
 
 Or from this directory:
@@ -66,7 +67,7 @@ Visit http://localhost:5173
 ## 🔧 Project Structure
 
 ```
-packages/frontend/vue/
+vue-app/
 ├── public/
 │   └── vite.svg              # Vite icon
 ├── src/
@@ -85,8 +86,6 @@ packages/frontend/vue/
 ├── tsconfig.json             # TypeScript config
 └── package.json              # Dependencies
 ```
-
-> `src/contracts/deployedContracts.ts` is updated automatically after each `pnpm deploy:*`. Run `pnpm generate:abis` from the repository root if you need to refresh it manually.
 
 ## 🎯 FHEVM Composables Usage
 

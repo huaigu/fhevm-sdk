@@ -13,22 +13,11 @@ React + Vite example demonstrating the `@0xbojack/fhevm-react` SDK.
 
 ## Quick Start
 
-From the generated monorepo root:
-
 ```bash
-pnpm install            # install all workspace dependencies
-pnpm chain              # terminal 1: start local Hardhat node
-pnpm deploy:localhost   # terminal 2: deploy contracts & refresh ABIs
-pnpm dev                # terminal 3: launch the React app
-
-# Optional: regenerate ABI map without redeploying
-pnpm generate:abis
-```
-
-Or from this package directory:
-
-```bash
+# Install dependencies
 pnpm install
+
+# Start development server
 pnpm dev
 ```
 
@@ -49,8 +38,6 @@ src/
 ├── main.tsx                     # React entry point
 └── index.css                    # Global styles
 ```
-
-> `contracts/deployedContracts.ts` is auto-generated after each `pnpm deploy:*`. Run `pnpm generate:abis` from the repository root if you need to refresh it manually.
 
 ## FHEVM Hooks Usage
 

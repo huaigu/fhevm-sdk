@@ -2,6 +2,7 @@
   "name": "hardhat",
   "description": "Hardhat-based template for developing FHEVM Solidity smart contracts",
   "version": "0.1.0",
+  "private": true,
   "engines": {
     "node": ">=20",
     "npm": ">=7.0.0"
@@ -82,8 +83,8 @@
     "chain": "hardhat node --network hardhat --no-deploy",
     "deploy:localhost": "hardhat deploy --network localhost && pnpm run --silent generate:abis",
     "deploy:sepolia": "hardhat deploy --network sepolia && pnpm run --silent generate:abis",
-    "generate:abis": "ts-node --project tsconfig.json ./scripts/generateTsAbis.ts",
-    "verify:sepolia": "hardhat verify --network sepolia"
+    "verify:sepolia": "hardhat verify --network sepolia",
+    "generate:abis": "ts-node --project tsconfig.json ./scripts/generateTsAbis.ts"
   },
   "overrides": {
     "ws@>=7.0.0 <7.5.10": ">=7.5.10",
@@ -102,6 +103,5 @@
     "axios@<0.29.1": ">=0.29.1",
     "cookie@<0.7.0": ">=0.7.0",
     "minimatch": "^3.1.2"
-  },
-  "private": true
+  }
 }
