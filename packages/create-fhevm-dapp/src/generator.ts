@@ -4,10 +4,7 @@ import { copyDirectory, ensureDir, pathExists, readJson, writeJson } from './uti
 import { createSpinner } from './utils/spinner.js'
 import { logger } from './utils/logger.js'
 import { getTemplateInfo } from './templates.js'
-import { exec } from 'child_process'
-import { promisify } from 'util'
-
-const execAsync = promisify(exec)
+import { spawn } from 'child_process'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -192,11 +189,27 @@ async function updateFrontendPackageJson(
 }
 
 async function installDependencies(targetDir: string, packageManager: string): Promise<void> {
-  const installCommand = packageManager === 'yarn' ? 'yarn' : `${packageManager} install`
+  return new Promise((resolve, reject) => {
+    const command = packageManager
+    const args = packageManager === 'yarn' ? [] : ['install']
 
-  await execAsync(installCommand, {
-    cwd: targetDir,
-    stdio: 'inherit'
+    const child = spawn(command, args, {
+      cwd: targetDir,
+      stdio: 'inherit',
+      shell: true
+    })
+
+    child.on('error', (error) => {
+      reject(error)
+    })
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve()
+      } else {
+        reject(new Error(`${packageManager} install exited with code ${code}`))
+      }
+    })
   })
 }
 
