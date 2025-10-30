@@ -2,7 +2,6 @@
   "name": "hardhat",
   "description": "Hardhat-based template for developing FHEVM Solidity smart contracts",
   "version": "0.1.0",
-  "private": true,
   "engines": {
     "node": ">=20",
     "npm": ">=7.0.0"
@@ -103,5 +102,6 @@
     "axios@<0.29.1": ">=0.29.1",
     "cookie@<0.7.0": ">=0.7.0",
     "minimatch": "^3.1.2"
-  }
+  },
+  "private": true
 }
