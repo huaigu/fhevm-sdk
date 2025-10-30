@@ -123,7 +123,8 @@ async function createApp(
     config.framework = config.framework || answers.framework
     config.appName = config.appName || answers.appName
     config.packageManager = config.packageManager || answers.packageManager
-    config.installDeps = answers.installDeps
+    // Interactive mode: install deps by default (unless --skip-install was used)
+    // installDeps is already set from options in line 75
     // If user confirmed overwrite in interactive mode, set force to true
     if (answers.overwrite === true) {
       config.force = true

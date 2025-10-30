@@ -8,7 +8,6 @@ export interface PromptAnswers {
   framework: string
   appName: string
   packageManager: string
-  installDeps: boolean
   overwrite?: boolean
 }
 
@@ -76,12 +75,6 @@ export async function askQuestions(): Promise<PromptAnswers> {
           { title: 'yarn', value: 'yarn' }
         ],
         initial: 0
-      },
-      {
-        type: 'confirm',
-        name: 'installDeps',
-        message: 'Install dependencies now?',
-        initial: true
       }
     ],
     {
