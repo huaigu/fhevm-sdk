@@ -124,12 +124,16 @@ async function createApp(
     config.appName = config.appName || answers.appName
     config.packageManager = config.packageManager || answers.packageManager
     config.installDeps = answers.installDeps
+    // If user confirmed overwrite in interactive mode, set force to true
+    if (answers.overwrite === true) {
+      config.force = true
+    }
   }
 
   // Validate and set target directory
   config.targetDir = path.resolve(process.cwd(), config.appName!)
 
-  // Check if directory exists (if not force)
+  // Check if directory exists (if not force and not in interactive mode)
   if (!config.force && (await pathExists(config.targetDir))) {
     logger.error(
       `Directory ${config.appName} already exists. Use --force to overwrite.`

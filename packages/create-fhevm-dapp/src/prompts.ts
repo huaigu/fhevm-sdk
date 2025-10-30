@@ -1,12 +1,15 @@
 import prompts from 'prompts'
+import path from 'path'
 import { TEMPLATES, getAvailableTemplates } from './templates.js'
 import { isValidPackageName, getPackageNameError } from './validator.js'
+import { pathExists } from './utils/fileSystem.js'
 
 export interface PromptAnswers {
   framework: string
   appName: string
   packageManager: string
   installDeps: boolean
+  overwrite?: boolean
 }
 
 export async function askQuestions(): Promise<PromptAnswers> {
@@ -41,6 +44,27 @@ export async function askQuestions(): Promise<PromptAnswers> {
           }
           return true
         }
+      },
+      {
+        type: (prev, values) => {
+          const targetDir = path.resolve(process.cwd(), values.appName)
+          return pathExists(targetDir).then((exists) => (exists ? 'confirm' : null))
+        },
+        name: 'overwrite',
+        message: (prev, values) =>
+          `Directory ${values.appName} already exists. Overwrite?`,
+        initial: false
+      },
+      {
+        type: (prev, values) => {
+          // If user declined to overwrite, exit
+          if (values.overwrite === false) {
+            console.log('\nOperation cancelled')
+            process.exit(0)
+          }
+          return null
+        },
+        name: '_exit'
       },
       {
         type: 'select',
