@@ -1,6 +1,6 @@
 {
   "name": "@0xbojack/create-fhevm-dapp",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Create FHEVM dApps with framework templates",
   "type": "module",
   "bin": {
@@ -29,6 +29,7 @@
     "react",
     "nextjs"
   ],
+  "homepage": "https://github.com/huaigu/fhevm-sdk/blob/main/packages/create-fhevm-dapp/README.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/0xbojack/fhevm-sdk",

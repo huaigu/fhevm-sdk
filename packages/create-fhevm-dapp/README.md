@@ -2,7 +2,7 @@
 
 Scaffold FHEVM dApps with your favorite framework in seconds.
 
-![CLI demo showing non-interactive project creation](./assets/create-fhevm-dapp.gif)
+![CLI demo showing non-interactive project creation](https://github.com/huaigu/fhevm-sdk/blob/HEAD/packages/create-fhevm-dapp/assets/create-fhevm-dapp.gif)
 
 ## Quick Start
 
