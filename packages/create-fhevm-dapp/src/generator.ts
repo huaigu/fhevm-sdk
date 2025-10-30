@@ -4,8 +4,6 @@ import { copyDirectory, ensureDir, pathExists, readJson, writeJson } from './uti
 import { createSpinner } from './utils/spinner.js'
 import { logger } from './utils/logger.js'
 import { getTemplateInfo } from './templates.js'
-import { spawn } from 'child_process'
-
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
@@ -32,12 +30,11 @@ export interface GeneratorConfig {
   appName: string
   targetDir: string
   packageManager: string
-  installDeps: boolean
   force: boolean
 }
 
 export async function generateApp(config: GeneratorConfig): Promise<void> {
-  const { framework, appName, targetDir, packageManager, installDeps, force } = config
+  const { framework, appName, targetDir, packageManager, force } = config
 
   // Check if directory exists
   if (await pathExists(targetDir)) {
@@ -109,22 +106,6 @@ export async function generateApp(config: GeneratorConfig): Promise<void> {
 
   pkgSpinner.succeed('package.json files updated')
 
-  // 5. Install dependencies
-  if (installDeps) {
-    const installSpinner = createSpinner(`Installing dependencies with ${packageManager}...`)
-    installSpinner.start()
-
-    try {
-      await installDependencies(targetDir, packageManager)
-      installSpinner.succeed('Dependencies installed')
-    } catch (error) {
-      installSpinner.fail('Failed to install dependencies')
-      logger.warn('You can install dependencies manually by running:')
-      logger.dim(`  cd ${appName}`)
-      logger.dim(`  ${packageManager} install`)
-    }
-  }
-
   // Print success message
   printSuccessMessage(config)
 }
@@ -188,31 +169,6 @@ async function updateFrontendPackageJson(
   await writeJson(pkgPath, pkg)
 }
 
-async function installDependencies(targetDir: string, packageManager: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const command = packageManager
-    const args = packageManager === 'yarn' ? [] : ['install']
-
-    const child = spawn(command, args, {
-      cwd: targetDir,
-      stdio: 'inherit',
-      shell: true
-    })
-
-    child.on('error', (error) => {
-      reject(error)
-    })
-
-    child.on('close', (code) => {
-      if (code === 0) {
-        resolve()
-      } else {
-        reject(new Error(`${packageManager} install exited with code ${code}`))
-      }
-    })
-  })
-}
-
 function printSuccessMessage(config: GeneratorConfig): void {
   const { appName, framework, packageManager } = config
   const templateInfo = getTemplateInfo(framework)!
@@ -223,6 +179,7 @@ function printSuccessMessage(config: GeneratorConfig): void {
 
   logger.title('📍 Next step:')
   logger.info(`  cd ${appName}`)
+  logger.dim(`  ${packageManager} install`)
   logger.newLine()
 
   logger.title('Project Structure (Monorepo):')
@@ -270,8 +227,8 @@ function printSuccessMessage(config: GeneratorConfig): void {
   logger.dim(`     ${packageManager} dev`)
   logger.newLine()
 
-  logger.info('📚 Documentation: https://github.com/0xbojack/fhevm-sdk')
-  logger.info('🐛 Issues: https://github.com/0xbojack/fhevm-sdk/issues')
+  logger.info('📚 Documentation: https://github.com/huaigu/fhevm-sdk')
+  logger.info('🐛 Issues: https://github.com/huaigu/fhevm-sdk/issues')
   logger.newLine()
   logger.title('Happy coding! 🚀')
 }

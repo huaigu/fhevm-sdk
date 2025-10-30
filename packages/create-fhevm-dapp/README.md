@@ -19,10 +19,9 @@ npx @0xbojack/create-fhevm-dapp
 ```
 
 The CLI will guide you through:
-- Framework selection (Vue, React)
+- Framework selection (Next.js, React, Vue)
 - Project name
 - Package manager (pnpm, npm, yarn)
-- Dependency installation
 
 ### Command Line Mode
 
@@ -42,9 +41,6 @@ npx @0xbojack/create-fhevm-dapp nextjs my-dapp
 # Create a React app
 npx @0xbojack/create-fhevm-dapp react my-dapp
 
-# Skip dependency installation
-npx @0xbojack/create-fhevm-dapp vue my-dapp --skip-install
-
 # Use specific package manager
 npx @0xbojack/create-fhevm-dapp nextjs my-dapp --package-manager npm
 
@@ -56,9 +52,8 @@ npx @0xbojack/create-fhevm-dapp nextjs my-dapp --force
 
 | Flag | Alias | Description | Default |
 |------|-------|-------------|---------|
-| `--framework <type>` | `-f` | Framework choice (vue\|nextjs\|react) | Interactive prompt |
+| `--framework <type>` | `-f` | Framework choice (nextjs\|react\|vue) | Interactive prompt |
 | `--name <name>` | `-n` | App name | Interactive prompt |
-| `--skip-install` | `-s` | Skip dependency installation | `false` |
 | `--package-manager <pm>` | `-p` | Package manager (pnpm\|npm\|yarn) | Auto-detect |
 | `--force` | - | Overwrite existing directory | `false` |
 | `--help` | `-h` | Show help message | - |
@@ -68,9 +63,9 @@ npx @0xbojack/create-fhevm-dapp nextjs my-dapp --force
 
 | Framework | Status | Package |
 |-----------|--------|---------|
-| Vue 3 | ✅ Available | `@0xbojack/fhevm-vue` |
 | Next.js | ✅ Available | `@0xbojack/fhevm-nextjs` |
 | React | ✅ Available | `@0xbojack/fhevm-react` |
+| Vue 3 | ✅ Available | `@0xbojack/fhevm-vue` |
 
 ## What's Included
 
@@ -136,6 +131,7 @@ pnpm generate:abis
 ```bash
 npx @0xbojack/create-fhevm-dapp vue my-dapp
 cd my-dapp
+pnpm install
 ```
 
 ### 2. Start Development
@@ -166,17 +162,18 @@ $ npx @0xbojack/create-fhevm-dapp vue my-encrypted-counter
 ✔ Framework · Vue
 ✔ App name · my-encrypted-counter
 ✔ Package manager · pnpm
-✔ Install dependencies · Yes
 
 Creating FHEVM dApp...
-✔ Template files copied
-✔ package.json updated
-✔ Dependencies installed
+✔ Monorepo structure created
+✔ Vue frontend copied
+✔ Hardhat contracts copied
+✔ package.json files updated
 
 🎉 Success! Created my-encrypted-counter
 
 # 2. Start development
 $ cd my-encrypted-counter
+$ pnpm install
 $ pnpm chain  # Terminal 1
 $ pnpm deploy:localhost  # Terminal 2 (refreshes ABI map)
 $ pnpm generate:abis     # Optional: regenerate ABI map manually
@@ -238,7 +235,7 @@ npx kill-port 8545
 ## Learn More
 
 - **FHEVM Documentation**: https://docs.zama.ai
-- **FHEVM SDK**: https://github.com/0xbojack/fhevm-sdk
+- **FHEVM SDK**: https://github.com/huaigu/fhevm-sdk
 - **Example Apps**: See `/examples` in the SDK repo
 
 ## Contributing
@@ -251,5 +248,5 @@ BSD-3-Clause-Clear
 
 ## Support
 
-- **GitHub Issues**: https://github.com/0xbojack/fhevm-sdk/issues
-- **Documentation**: https://github.com/0xbojack/fhevm-sdk#readme
+- **GitHub Issues**: https://github.com/huaigu/fhevm-sdk/issues
+- **Documentation**: https://github.com/huaigu/fhevm-sdk#readme

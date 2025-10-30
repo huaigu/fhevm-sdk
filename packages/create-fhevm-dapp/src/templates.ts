@@ -6,12 +6,6 @@ export interface TemplateInfo {
 }
 
 export const TEMPLATES: Record<string, TemplateInfo> = {
-  vue: {
-    name: 'Vue',
-    description: 'Vue 3 + Vite + @0xbojack/fhevm-vue',
-    packageName: '@0xbojack/fhevm-vue',
-    available: true
-  },
   nextjs: {
     name: 'Next.js',
     description: 'Next.js 15 + @0xbojack/fhevm-nextjs',
@@ -22,6 +16,12 @@ export const TEMPLATES: Record<string, TemplateInfo> = {
     name: 'React',
     description: 'React + Vite + @0xbojack/fhevm-react',
     packageName: '@0xbojack/fhevm-react',
+    available: true
+  },
+  vue: {
+    name: 'Vue',
+    description: 'Vue 3 + Vite + @0xbojack/fhevm-vue',
+    packageName: '@0xbojack/fhevm-vue',
     available: true
   }
 }

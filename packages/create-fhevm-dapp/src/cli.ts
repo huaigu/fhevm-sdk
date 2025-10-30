@@ -48,9 +48,8 @@ export async function run() {
     .version(packageJson.version)
     .argument('[framework]', `Framework to use (${getAvailableTemplates().join(', ')})`)
     .argument('[name]', 'App name')
-    .option('-f, --framework <type>', 'Framework choice (vue|react)')
+    .option('-f, --framework <type>', 'Framework choice (nextjs|react|vue)')
     .option('-n, --name <name>', 'App name')
-    .option('-s, --skip-install', 'Skip dependency installation', false)
     .option('-p, --package-manager <pm>', 'Package manager (pnpm|npm|yarn)')
     .option('--force', 'Overwrite existing directory', false)
     .action(async (framework?: string, name?: string, options?: any) => {
@@ -71,8 +70,7 @@ async function createApp(
   options?: any
 ): Promise<void> {
   let config: Partial<GeneratorConfig> = {
-    force: options?.force || false,
-    installDeps: !options?.skipInstall
+    force: options?.force || false
   }
 
   // Get framework
@@ -123,8 +121,6 @@ async function createApp(
     config.framework = config.framework || answers.framework
     config.appName = config.appName || answers.appName
     config.packageManager = config.packageManager || answers.packageManager
-    // Interactive mode: install deps by default (unless --skip-install was used)
-    // installDeps is already set from options in line 75
     // If user confirmed overwrite in interactive mode, set force to true
     if (answers.overwrite === true) {
       config.force = true
