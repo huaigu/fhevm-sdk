@@ -264,8 +264,8 @@ pnpm dev
 graph TB
     subgraph "Client Side"
         A[Your dApp]
-        B[@fhevm/react or @fhevm/vue]
-        C[@fhevm/core]
+        B["@fhevm/react or @fhevm/vue"]
+        C["@fhevm/core"]
         D[Storage Adapters]
         E[Memory / localStorage / IndexedDB]
     end
@@ -433,6 +433,6 @@ Special thanks to:
 
 **[⭐ Star this repo](https://github.com/zama-ai/fhevm-sdk)** if you find it useful!
 
-Made with ❤️ by [Zama](https://zama.ai)
+Made with ❤️ by 0xbojack
 
 </div>
