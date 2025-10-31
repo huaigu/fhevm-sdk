@@ -97,14 +97,13 @@ fhevm-hardhat-template/
 
 ## 📄 License
 
-This project is licensed under the BSD-3-Clause-Clear License. See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## 🆘 Support
 
-- **GitHub Issues**: [Report bugs or request features](https://github.com/zama-ai/fhevm/issues)
+- **GitHub Issues**: [Report bugs or request features](https://github.com/huaigu/fhevm-sdk/issues)
 - **Documentation**: [FHEVM Docs](https://docs.zama.ai)
-- **Community**: [Zama Discord](https://discord.gg/zama)
 
 ---
 
-**Built with ❤️ by the Zama team**
+**Maintained with ❤️ by 0xbojack**

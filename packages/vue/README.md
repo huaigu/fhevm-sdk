@@ -415,7 +415,7 @@ This package supports **Vue 3 Composition API only**. Options API is not support
 
 ## License
 
-BSD-3-Clause-Clear
+MIT License
 
 ## Links
 

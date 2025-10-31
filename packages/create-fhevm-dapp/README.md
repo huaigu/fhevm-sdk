@@ -244,7 +244,7 @@ Contributions are welcome! Please check the main repository for guidelines.
 
 ## License
 
-BSD-3-Clause-Clear
+MIT License
 
 ## Support
 

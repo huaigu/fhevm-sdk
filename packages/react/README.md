@@ -408,7 +408,7 @@ import type {
 
 ## License
 
-BSD-3-Clause-Clear
+MIT License
 
 ## Links
 

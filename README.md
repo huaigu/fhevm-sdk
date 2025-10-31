@@ -379,14 +379,6 @@ pnpm dev
 - **[Next.js Example](examples/nextjs/README.md)** - Full React application
 - **[Vue Example](examples/vue/README.md)** - Minimal Vue 3 application
 
-### Community
-
-- **[Discord](https://discord.com/invite/zama)** - Join the Zama community
-- **[GitHub Issues](https://github.com/zama-ai/fhevm-sdk/issues)** - Report bugs or request features
-- **[Zama Website](https://zama.ai)** - Learn more about Zama
-
----
-
 ## 🤝 Contributing
 
 We welcome contributions! Please see our contributing guidelines for more details.
@@ -411,21 +403,7 @@ We welcome contributions! Please see our contributing guidelines for more detail
 
 ## 📄 License
 
-This project is licensed under the **BSD-3-Clause-Clear License**. See [LICENSE](LICENSE) for details.
-
-**Additional Patent Grant:**
-Zama grants users a non-exclusive, free, non-commercial license on all patents filed in its name relating to this open-source code for the sole purpose of evaluation, development, research, prototyping, and experimentation.
-
----
-
-## 🏆 Credits
-
-Built by the Zama team and contributors.
-
-Special thanks to:
-- The FHEVM team for the underlying protocol
-- All open-source contributors
-- The Ethereum and Web3 community
+This project is licensed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
 ---
 

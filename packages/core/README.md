@@ -632,7 +632,7 @@ See full working examples in our monorepo:
 
 ## License
 
-BSD-3-Clause-Clear
+MIT License
 
 ## Links
 

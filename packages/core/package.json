@@ -43,8 +43,8 @@
     "zama",
     "blockchain"
   ],
-  "author": "Zama",
-  "license": "BSD-3-Clause-Clear",
+  "author": "0xbojack",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/huaigu/fhevm-sdk.git",

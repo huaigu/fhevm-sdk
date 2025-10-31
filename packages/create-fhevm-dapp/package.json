@@ -36,7 +36,7 @@
     "directory": "packages/create-fhevm-dapp"
   },
   "author": "0xbojack",
-  "license": "BSD-3-Clause-Clear",
+  "license": "MIT",
   "dependencies": {
     "commander": "^12.0.0",
     "prompts": "^2.4.2",

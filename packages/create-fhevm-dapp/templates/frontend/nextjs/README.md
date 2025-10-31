@@ -226,4 +226,4 @@ This example is part of the FHEVM SDK monorepo. Contributions are welcome!
 
 ## 📄 License
 
-BSD-3-Clause-Clear
+MIT License
