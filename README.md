@@ -5,9 +5,8 @@
 **Framework-agnostic SDK for building privacy-preserving dApps with Fully Homomorphic Encryption**
 
 [![License](https://img.shields.io/badge/License-BSD--3--Clause--Clear-blue.svg)](LICENSE)
-[![NPM Core](https://img.shields.io/npm/v/@fhevm/core?label=@fhevm/core)](https://www.npmjs.com/package/@fhevm/core)
-[![NPM React](https://img.shields.io/npm/v/@fhevm/react?label=@fhevm/react)](https://www.npmjs.com/package/@fhevm/react)
-[![NPM Vue](https://img.shields.io/npm/v/@fhevm/vue?label=@fhevm/vue)](https://www.npmjs.com/package/@fhevm/vue)
+[![NPM Core](https://img.shields.io/npm/v/%400xbojack%2Ffhevm-core?label=@0xbojack/fhevm-core)](https://www.npmjs.com/package/@0xbojack/fhevm-core)
+[![NPM Create](https://img.shields.io/npm/v/%400xbojack%2Fcreate-fhevm-dapp?label=@0xbojack/create-fhevm-dapp)](https://www.npmjs.com/package/@0xbojack/create-fhevm-dapp)
 
 [Documentation](https://docs.zama.ai/fhevm) • [Examples](#-live-examples) • [Quick Start](#-quick-start) • [Packages](#-packages)
 
@@ -31,6 +30,8 @@
 ---
 
 ## 🚀 Quick Start
+
+Looking to scaffold a full dApp quickly? Follow the [create-fhevm-dapp quickstart](packages/create-fhevm-dapp/README.md) for a guided setup.
 
 ### React
 
@@ -145,7 +146,7 @@ const decrypted = await client.decrypt(
 
 ## 📦 Packages
 
-This monorepo contains three NPM packages:
+This monorepo contains these packages:
 
 ### [@fhevm/core](packages/core)
 
@@ -200,6 +201,17 @@ npm install @fhevm/vue @fhevm/core ethers
 
 [📖 Documentation](packages/vue/README.md)
 
+### [create-fhevm-dapp](packages/create-fhevm-dapp)
+
+CLI toolkit for scaffolding new FHEVM-enabled dApps in minutes.
+
+```bash
+npx @0xbojack/create-fhevm-dapp
+```
+
+**NPM:** [@0xbojack/create-fhevm-dapp](https://www.npmjs.com/package/@0xbojack/create-fhevm-dapp)
+
+
 ---
 
 ## 🎨 Live Examples
@@ -209,7 +221,7 @@ npm install @fhevm/vue @fhevm/core ethers
 Full-featured React application with RainbowKit wallet integration and FHECounter contract.
 
 📂 **Code:** [examples/nextjs](examples/nextjs)
-🚀 **Live Demo:** Coming soon
+🚀 **Live Demo:** [Next.js Online Demo](https://github.com/huaigu/fhevm-sdk)
 
 **Features:**
 - Next.js 15 + React 19
